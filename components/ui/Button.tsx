@@ -14,6 +14,7 @@ type Props = {
   style?: ViewStyle;
   icon?: React.ReactNode;
   fullWidth?: boolean;
+  textColor?: string;
 };
 
 export function Button({
@@ -26,6 +27,7 @@ export function Button({
   style,
   icon,
   fullWidth,
+  textColor,
 }: Props) {
   const isDisabled = disabled || loading;
   const sizing = sizes[size];
@@ -47,7 +49,12 @@ export function Button({
           end={{ x: 1, y: 1 }}
           style={[styles.base, sizing, Shadow.md]}
         >
-          <Content title={title} loading={loading} icon={icon} color={Palette.white} />
+          <Content
+            title={title}
+            loading={loading}
+            icon={icon}
+            color={textColor ?? Palette.white}
+          />
         </LinearGradient>
       </Pressable>
     );
@@ -72,7 +79,7 @@ export function Button({
         style,
       ]}
     >
-      <Content title={title} loading={loading} icon={icon} color={tokens.fg} />
+      <Content title={title} loading={loading} icon={icon} color={textColor ?? tokens.fg} />
     </Pressable>
   );
 }

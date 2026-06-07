@@ -22,7 +22,7 @@ export function ResponsiveContainer({ children }: { children: React.ReactNode })
 
   return (
     <LinearGradient
-      colors={[Palette.secondary, '#0B1220', Palette.primary]}
+      colors={[Palette.secondary, Palette.primaryDark, Palette.primary]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.backdrop}
