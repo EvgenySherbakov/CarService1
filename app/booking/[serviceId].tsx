@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { FlowHeader } from '@/components/layout/FlowHeader';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -45,9 +45,9 @@ export default function BookingScreen() {
 
   if (!service) {
     return (
-      <SafeAreaView style={{ flex: 1, padding: Spacing.lg }}>
-        <Text>{t('common.error')}</Text>
-      </SafeAreaView>
+      <View style={{ flex: 1, backgroundColor: Palette.background }}>
+        <FlowHeader title={t('common.error')} />
+      </View>
     );
   }
 
@@ -66,9 +66,18 @@ export default function BookingScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Palette.background }} edges={['bottom']}>
-      <Stack.Screen options={{ title: service.name, headerTintColor: Palette.text }} />
-      <ScrollView contentContainerStyle={{ padding: Spacing.lg, gap: Spacing.md, paddingBottom: 120 }}>
+    <View style={{ flex: 1, backgroundColor: Palette.background }}>
+      <FlowHeader title={service.name} />
+      <ScrollView
+        contentContainerStyle={{
+          padding: Spacing.lg,
+          gap: Spacing.md,
+          paddingBottom: 120,
+          width: '100%',
+          maxWidth: 720,
+          alignSelf: 'center',
+        }}
+      >
         <Image source={{ uri: service.imageUrl }} style={styles.hero} />
 
         <View>
@@ -209,7 +218,7 @@ export default function BookingScreen() {
         </View>
         <Button title={t('services.bookNow')} variant="gradient" onPress={handleContinue} />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { FlowHeader } from '@/components/layout/FlowHeader';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -32,9 +32,9 @@ export default function RentalScreen() {
 
   if (!car) {
     return (
-      <SafeAreaView style={{ flex: 1, padding: Spacing.lg }}>
-        <Text>{t('common.error')}</Text>
-      </SafeAreaView>
+      <View style={{ flex: 1, backgroundColor: Palette.background }}>
+        <FlowHeader title={t('common.error')} />
+      </View>
     );
   }
 
@@ -59,11 +59,18 @@ export default function RentalScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Palette.background }} edges={['bottom']}>
-      <Stack.Screen
-        options={{ title: `${car.make} ${car.model}`, headerTintColor: Palette.text }}
-      />
-      <ScrollView contentContainerStyle={{ padding: Spacing.lg, gap: Spacing.md, paddingBottom: 140 }}>
+    <View style={{ flex: 1, backgroundColor: Palette.background }}>
+      <FlowHeader title={`${car.make} ${car.model}`} />
+      <ScrollView
+        contentContainerStyle={{
+          padding: Spacing.lg,
+          gap: Spacing.md,
+          paddingBottom: 140,
+          width: '100%',
+          maxWidth: 720,
+          alignSelf: 'center',
+        }}
+      >
         <Image source={{ uri: car.imageUrl }} style={styles.hero} />
 
         <View style={styles.rowBetween}>
@@ -113,7 +120,7 @@ export default function RentalScreen() {
         </View>
         <Button title={t('rentals.rentNow')} variant="gradient" onPress={handleContinue} />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

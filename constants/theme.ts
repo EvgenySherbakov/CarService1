@@ -37,6 +37,7 @@ export const Palette = {
   info: '#1D4FB3',
   overlay: 'rgba(11, 26, 32, 0.5)',
   black: '#0A0A0A',
+  white: '#FFFFFF',
 } as const;
 
 export const Spacing = {

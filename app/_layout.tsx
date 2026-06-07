@@ -1,12 +1,11 @@
 import 'react-native-gesture-handler';
 import '@/i18n';
 import { useEffect } from 'react';
-import { Slot, useRouter, useSegments } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
-import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 
 const queryClient = new QueryClient();
 
@@ -30,11 +29,7 @@ function AuthGate() {
     }
   }, [profile, hydrated, segments, router]);
 
-  return (
-    <ResponsiveContainer>
-      <Slot />
-    </ResponsiveContainer>
-  );
+  return <Stack screenOptions={{ headerShown: false }} />;
 }
 
 export default function RootLayout() {

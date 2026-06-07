@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { FlowHeader } from '@/components/layout/FlowHeader';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useBookingStore } from '@/store/booking';
@@ -103,7 +104,6 @@ export default function CheckoutScreen() {
   if (done) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: Palette.background }}>
-        <Stack.Screen options={{ headerShown: false }} />
         <LinearGradient
           colors={[Palette.primary, Palette.secondary]}
           style={styles.successHero}
@@ -133,9 +133,18 @@ export default function CheckoutScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Palette.background }} edges={['bottom']}>
-      <Stack.Screen options={{ title: t('checkout.title'), headerTintColor: Palette.text }} />
-      <ScrollView contentContainerStyle={{ padding: Spacing.lg, gap: Spacing.md, paddingBottom: 140 }}>
+    <View style={{ flex: 1, backgroundColor: Palette.background }}>
+      <FlowHeader title={t('checkout.title')} />
+      <ScrollView
+        contentContainerStyle={{
+          padding: Spacing.lg,
+          gap: Spacing.md,
+          paddingBottom: 140,
+          width: '100%',
+          maxWidth: 640,
+          alignSelf: 'center',
+        }}
+      >
         <Card>
           <Text style={[Typography.h4, { marginBottom: Spacing.xs }]}>{params.title}</Text>
           {isRental ? (
@@ -175,7 +184,7 @@ export default function CheckoutScreen() {
           <PayMethod
             active={method === 'applePay'}
             onPress={() => setMethod('applePay')}
-            icon=""
+            icon="🍏"
             label={t('checkout.applePay')}
           />
           <PayMethod
@@ -201,7 +210,7 @@ export default function CheckoutScreen() {
           onPress={handlePay}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

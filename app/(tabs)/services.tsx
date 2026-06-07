@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Page } from '@/components/layout/Page';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { Grid } from '@/components/layout/Grid';
 import { ServiceCard } from '@/components/ServiceCard';
+import { useResponsive } from '@/hooks/useResponsive';
 import { mockServices } from '@/lib/mock-data';
 import { Palette, Radius, Spacing, Typography } from '@/constants/theme';
 import type { ServiceType } from '@/types';
@@ -13,67 +16,70 @@ type Filter = 'all' | ServiceType;
 export default function ServicesScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { isDesktop } = useResponsive();
   const params = useLocalSearchParams<{ type?: ServiceType }>();
   const [filter, setFilter] = useState<Filter>(params.type ?? 'all');
 
-  const services = useMemo(() => {
-    if (filter === 'all') return mockServices;
-    return mockServices.filter((s) => s.type === filter);
-  }, [filter]);
+  const services = useMemo(
+    () => (filter === 'all' ? mockServices : mockServices.filter((s) => s.type === filter)),
+    [filter],
+  );
+
+  const filters: { key: Filter; label: string }[] = [
+    { key: 'all', label: t('services.all') },
+    { key: 'repair', label: t('services.repair') },
+    { key: 'wash', label: t('services.wash') },
+  ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Palette.background }} edges={['top']}>
-      <View style={styles.header}>
-        <Text style={[Typography.h2]}>{t('services.title')}</Text>
-        <View style={styles.tabs}>
-          {(['all', 'repair', 'wash'] as Filter[]).map((f) => {
-            const active = filter === f;
-            const label =
-              f === 'all' ? t('services.all') : f === 'repair' ? t('services.repair') : t('services.wash');
-            return (
-              <Pressable
-                key={f}
-                onPress={() => setFilter(f)}
+    <Page>
+      <PageHeader title={t('services.title')} subtitle={`${services.length} ${t('common.all').toLowerCase()}`} />
+
+      <View style={styles.tabs}>
+        {filters.map((f) => {
+          const active = filter === f.key;
+          return (
+            <Pressable
+              key={f.key}
+              onPress={() => setFilter(f.key)}
+              style={[styles.tab, active && styles.tabActive]}
+            >
+              <Text
                 style={[
-                  styles.tab,
-                  active && { backgroundColor: Palette.primary, borderColor: Palette.primary },
+                  Typography.bodyBold,
+                  { color: active ? Palette.white : Palette.textSecondary },
                 ]}
               >
-                <Text
-                  style={[
-                    Typography.small,
-                    { color: active ? Palette.white : Palette.textSecondary },
-                  ]}
-                >
-                  {label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+                {f.label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
 
-      <FlatList
+      <View style={{ height: Spacing.md }} />
+
+      <Grid
         data={services}
-        keyExtractor={(i) => i.id}
-        contentContainerStyle={{ padding: Spacing.lg, gap: Spacing.md, paddingBottom: Spacing.xxl }}
-        renderItem={({ item }) => (
+        columns={isDesktop ? 3 : 1}
+        keyExtractor={(s) => s.id}
+        renderItem={(item) => (
           <ServiceCard service={item} onPress={() => router.push(`/booking/${item.id}`)} />
         )}
       />
-    </SafeAreaView>
+    </Page>
   );
 }
 
 const styles = StyleSheet.create({
-  header: { paddingHorizontal: Spacing.lg, paddingTop: Spacing.md, gap: Spacing.md },
-  tabs: { flexDirection: 'row', gap: Spacing.xs },
+  tabs: { flexDirection: 'row', gap: Spacing.xs, flexWrap: 'wrap' },
   tab: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
     borderRadius: Radius.pill,
     borderWidth: 1,
     borderColor: Palette.border,
-    backgroundColor: Palette.surface,
+    backgroundColor: Palette.card,
   },
+  tabActive: { backgroundColor: Palette.primary, borderColor: Palette.primary },
 });

@@ -139,6 +139,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: Spacing.lg,
     justifyContent: 'space-between',
+    width: '100%',
+    maxWidth: 520,
+    alignSelf: 'center',
   },
   topRow: {
     flexDirection: 'row',
