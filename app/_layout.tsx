@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
+import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 
 const queryClient = new QueryClient();
 
@@ -29,7 +30,11 @@ function AuthGate() {
     }
   }, [profile, hydrated, segments, router]);
 
-  return <Slot />;
+  return (
+    <ResponsiveContainer>
+      <Slot />
+    </ResponsiveContainer>
+  );
 }
 
 export default function RootLayout() {
