@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "CarService1",
+    "slug": "carservice1",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "carservice1",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#009C3B"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.autoduck.carservice1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Used to attach photos of your vehicle.",
+        "NSPhotoLibraryUsageDescription": "Used to attach photos of your vehicle."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#009C3B"
+      },
+      "package": "com.autoduck.carservice1"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "color": "#009C3B"
+        }
+      ],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.autoduck.carservice1",
+          "enableGooglePay": true
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      }
+    }
+  }
+}
