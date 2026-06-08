@@ -608,7 +608,15 @@ type PaymentSheetResult =
 
 Expo-конфиг — `app.json`: `scheme: carservice1`, bundle id
 `com.autoduck.carservice1`, плагины `expo-router`, `expo-notifications`,
-`@stripe/stripe-react-native`, splash/icon в цветах бренда.
+сплеш в цветах бренда (`#00A859`). **Плагин `@stripe/stripe-react-native` в
+MVP не подключён** — он требует development build (`expo prebuild`) и
+ломает запуск через Expo Go. Подключать при интеграции реальных платежей.
+
+**Совместимость с Expo Go.** В MVP запуск на телефоне через Expo Go
+(Android/iOS) поддерживается без условий: нет нативных модулей, требующих
+prebuild; нет ссылок на отсутствующие asset-файлы в `app.json`. Это
+проверяется тем, что `Android Bundled` и `iOS Bundled` собираются без
+ошибок резолвинга при `npx expo start`.
 
 ---
 
@@ -625,7 +633,10 @@ Expo-конфиг — `app.json`: `scheme: carservice1`, bundle id
 - **Безопасность:** RLS на всех таблицах; ключи только в ENV; оплата — на
   серверной стороне (intent создаётся бэкендом).
 - **Кроссплатформенность:** один код для Web/iOS/Android; платформенные ветки
-  через `Platform.select`/`useResponsive`.
+  через `Platform.select`/`useResponsive`. На телефоне (Android/iOS) MVP
+  должен запускаться через **Expo Go** без `prebuild` — никаких нативных
+  модулей (Stripe-плагин подключается только при реальной интеграции
+  платежей).
 
 ---
 

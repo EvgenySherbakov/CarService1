@@ -4,14 +4,12 @@
     "slug": "carservice1",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "scheme": "carservice1",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
     "splash": {
-      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#009C3B"
+      "backgroundColor": "#00A859"
     },
     "ios": {
       "supportsTablet": true,
@@ -22,14 +20,12 @@
       }
     },
     "android": {
+      "package": "com.autoduck.carservice1",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#009C3B"
-      },
-      "package": "com.autoduck.carservice1"
+        "backgroundColor": "#00A859"
+      }
     },
     "web": {
-      "favicon": "./assets/favicon.png",
       "bundler": "metro",
       "output": "single"
     },
@@ -38,14 +34,7 @@
       [
         "expo-notifications",
         {
-          "color": "#009C3B"
-        }
-      ],
-      [
-        "@stripe/stripe-react-native",
-        {
-          "merchantIdentifier": "merchant.com.autoduck.carservice1",
-          "enableGooglePay": true
+          "color": "#00A859"
         }
       ]
     ],

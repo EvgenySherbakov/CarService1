@@ -1,126 +1,128 @@
 # CarService1 — AutoDuck 🦆
 
-Кроссплатформенное приложение (**Web · iOS · Android** из единой кодовой базы)
-для автосервиса **AutoDuck**: запись на **ремонт** и **мойку**, **аренда
-автомобилей** с онлайн-оплатой. Дизайн в цветах флага Бразилии, интерфейс на
-трёх языках.
+**Languages:** **English** · [Русский](README.ru.md)
 
-> Стек: **Expo Router + React Native + TypeScript + Supabase + Stripe**.
-> Сейчас работает на mock-данных — без ключей бэкенда запускается «из коробки».
+Cross-platform application (**Web · iOS · Android** from a single codebase)
+for the **AutoDuck** car service: book **repairs** and **car washes**, **rent
+cars** with online payment. Brazil-flag-inspired design, UI available in
+three languages.
+
+> Stack: **Expo Router + React Native + TypeScript + Supabase + Stripe**.
+> Runs out of the box on mock data — no backend keys required to try it.
 
 ---
 
-## Содержание
+## Contents
 
-- [Возможности](#возможности)
-- [Скриншоты экранов](#экраны)
-- [Технологический стек](#технологический-стек)
-- [Дизайн-система](#дизайн-система)
-- [Быстрый старт](#быстрый-старт)
-- [Запуск на Web / Android / iOS](#запуск-на-платформах)
-- [Структура проекта](#структура-проекта)
-- [Архитектура](#архитектура)
-- [Подключение Supabase](#подключение-supabase)
-- [Подключение Stripe](#подключение-stripe)
-- [Локализация](#локализация)
-- [Команды](#команды)
+- [Features](#features)
+- [Screens](#screens)
+- [Tech stack](#tech-stack)
+- [Design system](#design-system)
+- [Quick start](#quick-start)
+- [Running on Web / Android / iOS](#running-on-platforms)
+- [Project structure](#project-structure)
+- [Architecture](#architecture)
+- [Supabase setup](#supabase-setup)
+- [Stripe setup](#stripe-setup)
+- [Localization](#localization)
+- [Commands](#commands)
 - [Roadmap](#roadmap)
-- [Документация](#документация)
+- [Documentation](#documentation)
 
 ---
 
-## Возможности
+## Features
 
-### Без регистрации (гостевой доступ)
-С экрана входа доступны публичные страницы:
-- 📞 **Контакты** — телефоны, WhatsApp, email, адрес, карта
-- 🚗 **Автопарк** — каталог авто для аренды с описанием и ценой «от»
-- ℹ️ **О компании** — история, владельцы и директор, галерея автосервиса
+### Without sign-in (guest access)
+From the welcome screen guests can open three public pages:
+- 📞 **Contacts** — phones, WhatsApp, email, address, map
+- 🚗 **Fleet** — rental catalogue with description and starting price
+- ℹ️ **About** — company story, owners and director, workshop gallery
 
-### Для клиента
-- 🔐 Вход через **Google** и **Apple** (Supabase OAuth)
-- 🔧 **Запись на ремонт** — каталог услуг, выбор авто, даты, времени, комментарий
-- 💧 **Запись на мойку** — пакеты услуг и свободные слоты
-- 🚗 **Аренда авто** — каталог, период аренды, расчёт по дням, депозит
-- 💳 **Оплата через Stripe** — карта, **Apple Pay**, **Google Pay**, депозит-холд
-- 📅 **Мои записи** — предстоящие и прошедшие, статусы
-- 🚙 **Мой гараж** — автомобили пользователя
-- ⭐ **Отзывы и рейтинги** услуг и автомобилей
-- 🔔 **Push-уведомления** — напоминания о записях
-- 🌐 **3 языка** — English, Русский, Português (pt-BR)
+### For the client
+- 🔐 Sign in with **Google** and **Apple** (Supabase OAuth)
+- 🔧 **Book a repair** — service catalogue, vehicle/date/time, notes
+- 💧 **Book a wash** — wash packages and free time slots
+- 🚗 **Rent a car** — catalogue, rental period, per-day pricing, deposit
+- 💳 **Stripe payment** — card, **Apple Pay**, **Google Pay**, deposit hold
+- 📅 **My bookings** — upcoming and past, statuses
+- 🚙 **My garage** — user vehicles
+- ⭐ **Reviews and ratings** of services and cars
+- 🔔 **Push notifications** — booking reminders
+- 🌐 **3 languages** — English, Russian, Português (pt-BR)
 
-### Для администратора (AutoDuck)
-- 📊 Дашборд: записи на сегодня, выручка, активные аренды, новые отзывы
-- 🚗 Управление автопарком
-- 📅 Просмотр и управление записями
+### For the administrator (AutoDuck)
+- 📊 Dashboard: today's bookings, revenue, active rentals, new reviews
+- 🚗 Fleet management
+- 📅 Booking overview and status management
 
 ---
 
-## Экраны
+## Screens
 
-| Группа | Экран | Файл |
-|--------|-------|------|
-| Auth | Welcome / вход | `app/(auth)/welcome.tsx` |
-| Публичный | Контакты | `app/(public)/contact.tsx` |
-| Публичный | Автопарк (аренда) | `app/(public)/fleet.tsx` |
-| Публичный | О компании | `app/(public)/about.tsx` |
-| Клиент | Главная (Dashboard) | `app/(tabs)/index.tsx` |
-| Клиент | Услуги (ремонт/мойка) | `app/(tabs)/services.tsx` |
-| Клиент | Аренда | `app/(tabs)/rentals.tsx` |
-| Клиент | Записи | `app/(tabs)/bookings.tsx` |
-| Клиент | Профиль | `app/(tabs)/profile.tsx` |
-| Поток | Бронирование услуги | `app/booking/[serviceId].tsx` |
-| Поток | Бронирование аренды | `app/rental/[carId].tsx` |
-| Поток | Оплата (Stripe) | `app/checkout/[type].tsx` |
-| Админ | Дашборд | `app/admin/index.tsx` |
+| Group | Screen | File |
+|-------|--------|------|
+| Auth | Welcome / sign-in | `app/(auth)/welcome.tsx` |
+| Public | Contacts | `app/(public)/contact.tsx` |
+| Public | Fleet (rental) | `app/(public)/fleet.tsx` |
+| Public | About | `app/(public)/about.tsx` |
+| Client | Home (Dashboard) | `app/(tabs)/index.tsx` |
+| Client | Services (repair/wash) | `app/(tabs)/services.tsx` |
+| Client | Rentals | `app/(tabs)/rentals.tsx` |
+| Client | Bookings | `app/(tabs)/bookings.tsx` |
+| Client | Profile | `app/(tabs)/profile.tsx` |
+| Flow | Service booking | `app/booking/[serviceId].tsx` |
+| Flow | Rental booking | `app/rental/[carId].tsx` |
+| Flow | Checkout (Stripe) | `app/checkout/[type].tsx` |
+| Admin | Dashboard | `app/admin/index.tsx` |
 
-Подробное описание каждого экрана, состояний и сценариев — в
+Detailed per-screen specs, states and acceptance criteria — in
 [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md).
 
 ---
 
-## Технологический стек
+## Tech stack
 
-| Слой | Технология | Назначение |
-|------|-----------|-----------|
-| UI / Runtime | React Native `0.74` + Expo SDK `51` | единый код Web/iOS/Android |
-| Роутинг | Expo Router `v3` (file-based) | навигация по файловой структуре |
-| Язык | TypeScript (strict) | типобезопасность |
-| Состояние (клиент) | Zustand | auth-стор, booking-стор |
-| Серверное состояние | TanStack React Query | кеш запросов к Supabase |
-| Бэкенд / БД | Supabase (Postgres + Auth + Storage + RLS) | данные, аутентификация |
-| Платежи | Stripe (`@stripe/stripe-react-native`) | оплата, Apple/Google Pay |
-| i18n | i18next + expo-localization | мультиязычность |
-| Push | expo-notifications | напоминания |
-| Графика | expo-linear-gradient, react-native-svg | градиенты, иконки |
-
----
-
-## Дизайн-система
-
-Цвета вдохновлены флагом Бразилии, но осовременены (как у NuBank/iFood):
-
-| Токен | HEX | Применение |
-|-------|-----|-----------|
-| `primary` | `#00A859` | основной зелёный |
-| `accent` | `#FFD400` | жёлтый акцент |
-| `secondary` | `#0B2D6E` | глубокий синий (сайдбар, hero) |
-| `coral` | `#FF6B5C` | дополнительный акцент |
-| `background` | `#FAFCF9` | тёплый фон |
-| `text` | `#0E1A2B` | charcoal-navy текст |
-
-Все токены — в `constants/theme.ts` (`Palette`, `Spacing`, `Radius`,
-`Typography`, `Shadow`, `Gradients`). Стиль: flat, скруглённые карточки
-(18–28 px), мягкие тени с синим оттенком, градиенты из палитры флага.
-
-**Адаптивность** (`hooks/useResponsive.ts`):
-- `< 1000px` (телефон) — нижние вкладки, контент на всю ширину
-- `≥ 1000px` (десктоп) — **боковое меню** + контент с max-width по центру
-- `≥ 1340px` (wide) — расширенные сетки
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| UI / Runtime | React Native `0.74` + Expo SDK `51` | unified Web/iOS/Android code |
+| Routing | Expo Router `v3` (file-based) | navigation through the file tree |
+| Language | TypeScript (strict) | type safety |
+| Client state | Zustand | auth store, booking store |
+| Server state | TanStack React Query | Supabase query cache |
+| Backend / DB | Supabase (Postgres + Auth + Storage + RLS) | data, authentication |
+| Payments | Stripe (`@stripe/stripe-react-native`) | payment, Apple/Google Pay |
+| i18n | i18next + expo-localization | multilingual UI |
+| Push | expo-notifications | reminders |
+| Graphics | expo-linear-gradient, react-native-svg | gradients, icons |
 
 ---
 
-## Быстрый старт
+## Design system
+
+Colours inspired by the Brazilian flag, modernised (à la NuBank / iFood):
+
+| Token | HEX | Usage |
+|-------|-----|-------|
+| `primary` | `#00A859` | main green |
+| `accent` | `#FFD400` | yellow accent |
+| `secondary` | `#0B2D6E` | deep blue (sidebar, hero) |
+| `coral` | `#FF6B5C` | extra accent |
+| `background` | `#FAFCF9` | warm background |
+| `text` | `#0E1A2B` | charcoal-navy text |
+
+All tokens live in `constants/theme.ts` (`Palette`, `Spacing`, `Radius`,
+`Typography`, `Shadow`, `Gradients`). Style: flat, rounded cards (18–28 px),
+soft blue-tinted shadows, gradients from the flag palette.
+
+**Responsiveness** (`hooks/useResponsive.ts`):
+- `< 1000px` (phone) — bottom tabs, full-width content
+- `≥ 1000px` (desktop) — **sidebar** + content centred with a max-width
+- `≥ 1340px` (wide) — wider grids
+
+---
+
+## Quick start
 
 ```bash
 git clone https://github.com/EvgenySherbakov/CarService1.git
@@ -129,149 +131,183 @@ npm install
 npx expo start
 ```
 
-Без файла `.env` приложение запускается на **mock-данных** —
-весь UI и все сценарии (включая «оплату») работают локально.
+Without a `.env` file the app runs on **mock data** — the whole UI and all
+flows (including the "payment") work locally.
 
-> ⚠️ Требуется **Node.js 18+** и npm. На Windows запускайте из PowerShell или cmd.
-
----
-
-## Запуск на платформах
-
-После `npx expo start` в терминале:
-
-| Клавиша | Платформа | Требования |
-|---------|-----------|-----------|
-| `w` | Web (браузер) | — |
-| `a` | Android | эмулятор или Expo Go на телефоне |
-| `i` | iOS | только на macOS / Expo Go на iPhone |
-
-**Телефон без эмулятора:** установите приложение **Expo Go** (Play Store / App
-Store), отсканируйте QR-код из терминала.
-
-> В средах без доступа к сети Expo используйте `EXPO_OFFLINE=1 npx expo start`.
+> ⚠️ Requires **Node.js 18+** and npm. On Windows use PowerShell or cmd.
 
 ---
 
-## Структура проекта
+## Running on platforms
+
+After `npx expo start`, in the terminal:
+
+| Key | Platform | Requirements |
+|-----|----------|--------------|
+| `w` | Web (browser) | — |
+| `a` | Android | emulator or **Expo Go** on a phone |
+| `i` | iOS | macOS only / Expo Go on an iPhone |
+
+> In environments without access to the Expo registry use
+> `EXPO_OFFLINE=1 npx expo start`.
+
+### Android via Expo Go (no Android Studio required)
+
+The easiest way to test on a phone is **Expo Go** — no Android Studio,
+emulator or SDK install needed.
+
+1. On your Android phone install the free **Expo Go** app from Google Play.
+2. Make sure the phone and the computer are on the **same Wi-Fi network**.
+3. On the computer run `npx expo start`.
+4. A QR code appears in the terminal. Open Expo Go and **scan** it.
+5. The app loads and runs on the phone.
+
+**If networks differ or there are connection issues** — use tunnel mode:
+
+```bash
+npx expo start --tunnel
+```
+
+It creates a public URL through ngrok, so the QR code works from any network
+(including mobile data on the phone).
+
+### What if you pressed `a` and saw "Failed to resolve the Android SDK path"
+
+This means you don't have Android Studio + SDK installed. You don't need to
+install them just to test — use **Expo Go** instead (see above).
+
+The full Android dev path (Android Studio + emulator + SDK) is only required
+for a production build to Google Play.
+
+---
+
+## Project structure
 
 ```
 CarService1/
-├── app/                       # Экраны (Expo Router, file-based)
-│   ├── _layout.tsx            # Root Stack + AuthGate (редирект по сессии)
-│   ├── index.tsx              # Редирект на (tabs) или (auth)
+├── app/                       # Screens (Expo Router, file-based)
+│   ├── _layout.tsx            # Root Stack + AuthGate (session redirects)
+│   ├── index.tsx              # Redirect to (tabs) or (auth)
 │   ├── (auth)/
 │   │   ├── _layout.tsx
-│   │   └── welcome.tsx        # Вход Google/Apple + гостевые ссылки
-│   ├── (public)/              # Публичные страницы (без регистрации)
+│   │   └── welcome.tsx        # Google/Apple sign-in + guest links
+│   ├── (public)/              # Public pages (no sign-in)
 │   │   ├── _layout.tsx
-│   │   ├── contact.tsx        # Контакты + карта
-│   │   ├── fleet.tsx          # Автопарк для аренды
-│   │   └── about.tsx          # О компании / команда / галерея
-│   ├── (tabs)/                # Клиентская оболочка (AppShell)
+│   │   ├── contact.tsx        # Contacts + map
+│   │   ├── fleet.tsx          # Rental fleet
+│   │   └── about.tsx          # About / team / gallery
+│   ├── (tabs)/                # Client shell (AppShell)
 │   │   ├── _layout.tsx        # AppShell + Slot
-│   │   ├── index.tsx          # Главная / Dashboard
-│   │   ├── services.tsx       # Каталог услуг
-│   │   ├── rentals.tsx        # Каталог авто
-│   │   ├── bookings.tsx       # Мои записи
-│   │   └── profile.tsx        # Профиль
-│   ├── booking/[serviceId].tsx# Бронирование услуги
-│   ├── rental/[carId].tsx     # Бронирование аренды
-│   ├── checkout/[type].tsx    # Оплата (booking | rental)
-│   └── admin/                 # Админ-панель
+│   │   ├── index.tsx          # Home / Dashboard
+│   │   ├── services.tsx       # Service catalogue
+│   │   ├── rentals.tsx        # Car catalogue
+│   │   ├── bookings.tsx       # My bookings
+│   │   └── profile.tsx        # Profile
+│   ├── booking/[serviceId].tsx# Service booking
+│   ├── rental/[carId].tsx     # Rental booking
+│   ├── checkout/[type].tsx    # Checkout (booking | rental)
+│   └── admin/                 # Admin panel
 │       ├── _layout.tsx
 │       └── index.tsx
 ├── components/
-│   ├── AppShell.tsx           # Сайдбар (desktop) / нижние вкладки (mobile)
-│   ├── ServiceCard.tsx        # Карточка услуги
-│   ├── CarCard.tsx            # Карточка авто
-│   ├── BookingCard.tsx        # Карточка записи
-│   ├── RatingStars.tsx        # Рейтинг звёздами
-│   ├── LanguageSwitcher.tsx   # Переключатель языка
-│   ├── SectionHeader.tsx      # Заголовок секции + «смотреть все»
+│   ├── AppShell.tsx           # Sidebar (desktop) / bottom tabs (mobile)
+│   ├── ServiceCard.tsx        # Service card
+│   ├── CarCard.tsx            # Car card
+│   ├── BookingCard.tsx        # Booking card
+│   ├── RatingStars.tsx        # Star rating
+│   ├── LanguageSwitcher.tsx   # Language toggle
+│   ├── SectionHeader.tsx      # Section header + "view all"
 │   ├── layout/                # Page, PageHeader, FlowHeader, Grid
 │   └── ui/                    # Button, Card, Input, Badge
 ├── constants/
-│   ├── theme.ts               # Дизайн-токены
-│   ├── config.ts              # ENV + mock-режим
-│   └── nav.ts                 # Пункты навигации
-├── hooks/useResponsive.ts     # Брейкпоинты web
+│   ├── theme.ts               # Design tokens
+│   ├── config.ts              # ENV + mock mode
+│   └── nav.ts                 # Navigation items
+├── hooks/useResponsive.ts     # Web breakpoints
 ├── lib/
-│   ├── supabase.ts            # Клиент Supabase (или null в mock)
-│   ├── auth.ts                # OAuth, профиль
-│   ├── stripe.ts              # Оплата (mock-ready), formatAmount
-│   ├── notifications.ts       # Push-напоминания
-│   ├── mock-data.ts           # Демоданные
-│   └── company-data.ts        # Контент публичных страниц
+│   ├── supabase.ts            # Supabase client (or null in mock)
+│   ├── auth.ts                # OAuth, profile
+│   ├── stripe.ts              # Payment (mock-ready), formatAmount
+│   ├── notifications.ts       # Push reminders
+│   ├── mock-data.ts           # Demo data
+│   └── company-data.ts        # Public-pages content
 ├── store/
-│   ├── auth.ts                # Zustand: профиль, сессия
-│   └── booking.ts             # Zustand: записи, аренды, черновики
-├── types/index.ts             # Доменные типы
+│   ├── auth.ts                # Zustand: profile, session
+│   └── booking.ts             # Zustand: bookings, rentals, drafts
+├── types/index.ts             # Domain types
 ├── i18n/                      # en / ru / pt-BR + init
 ├── supabase/
-│   ├── schema.sql             # Таблицы, enum, RLS, триггеры
-│   ├── seed.sql               # Каталог услуг и автопарк
-│   └── README.md              # Инструкция по настройке
+│   ├── schema.sql             # Tables, enums, RLS, triggers
+│   ├── seed.sql               # Service catalogue and fleet
+│   └── README.md              # Backend setup
 ├── docs/
-│   └── SPECIFICATION.md       # Полное ТЗ (для людей и AI-агентов)
-├── metro.config.js            # Shim @opentelemetry/api для web
-├── app.json                   # Конфиг Expo
-└── TZ.md                      # Краткое ТЗ (исходное)
+│   └── SPECIFICATION.md       # Full spec (for humans and AI agents)
+├── metro.config.js            # @opentelemetry/api shim for web
+├── app.json                   # Expo config
+├── CLAUDE.md                  # Project rules
+└── TZ.md                      # Original short spec (RU)
 ```
 
 ---
 
-## Архитектура
+## Architecture
 
-- **Роутинг.** Корневой `app/_layout.tsx` — `Stack` с `AuthGate`: при наличии
-  профиля редиректит в `(tabs)`, иначе — на `welcome`. Группа `(tabs)`
-  рендерит `AppShell` + `Slot` (без отдельного навигатора, чтобы оболочка
-  адаптировалась к платформе). Потоки `booking` / `rental` / `checkout`
-  открываются поверх оболочки как экраны корневого стека.
-- **Состояние.** Локальное UI-состояние — `useState`; кросс-экранное —
-  Zustand (`store/auth.ts`, `store/booking.ts`). Серверные данные — через
-  React Query (готово к подключению Supabase).
-- **Mock-режим.** `Config.useMock` (`constants/config.ts`) включён, пока не
-  заданы переменные `.env`. В этом режиме `lib/*` возвращают данные из
-  `lib/mock-data.ts`, а `lib/stripe.ts` имитирует успешную оплату.
-- **Адаптивность.** Один набор экранов; layout-примитивы (`Page`, `Grid`,
-  `AppShell`) меняют поведение по `useResponsive()`.
-
----
-
-## Подключение Supabase
-
-1. Создайте проект на [supabase.com](https://supabase.com).
-2. В SQL-редакторе выполните `supabase/schema.sql`, затем `supabase/seed.sql`.
-3. Включите провайдеры **Google** и **Apple** в Authentication → Providers,
-   добавьте redirect `carservice1://auth-callback`.
-4. Скопируйте `.env.example` → `.env` и впишите `EXPO_PUBLIC_SUPABASE_URL` и
-   `EXPO_PUBLIC_SUPABASE_ANON_KEY`, поставьте `EXPO_PUBLIC_USE_MOCK=false`.
-5. Перезапустите `npx expo start` — приложение переключится на живые данные.
-
-Схема использует **Row Level Security** на всех таблицах, функцию
-`is_admin()` и триггер автосоздания `profiles` при регистрации. Детали — в
-[`supabase/README.md`](supabase/README.md).
+- **Routing.** The root `app/_layout.tsx` is a `Stack` with an `AuthGate`:
+  with a profile it redirects to `(tabs)`, otherwise to `welcome`. The
+  `(public)` group (contacts, fleet, about) is open to both guests and
+  authenticated users. The `(tabs)` group renders `AppShell` + `Slot` (no
+  separate navigator, so the shell adapts to the platform). The `booking` /
+  `rental` / `checkout` flows open over the shell as root-stack screens.
+- **State.** Local UI state via `useState`; cross-screen state via Zustand
+  (`store/auth.ts`, `store/booking.ts`). Server data through React Query
+  (ready for Supabase wiring).
+- **Mock mode.** `Config.useMock` (`constants/config.ts`) is on until `.env`
+  is filled. In this mode `lib/*` return data from `lib/mock-data.ts` and
+  `lib/stripe.ts` simulates a successful payment.
+- **Responsiveness.** One set of screens; layout primitives (`Page`, `Grid`,
+  `AppShell`) change behaviour via `useResponsive()`.
 
 ---
 
-## Подключение Stripe
+## Supabase setup
 
-В MVP оплата сымитирована (`lib/stripe.ts`). Для реальных платежей:
+1. Create a project at [supabase.com](https://supabase.com).
+2. In the SQL editor run `supabase/schema.sql`, then `supabase/seed.sql`.
+3. Enable **Google** and **Apple** providers in Authentication → Providers,
+   add the redirect `carservice1://auth-callback`.
+4. Copy `.env.example` → `.env`, paste `EXPO_PUBLIC_SUPABASE_URL` and
+   `EXPO_PUBLIC_SUPABASE_ANON_KEY`, set `EXPO_PUBLIC_USE_MOCK=false`.
+5. Restart `npx expo start` — the app switches to live data.
 
-1. Добавьте `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY` в `.env`.
-2. Разверните бэкенд (Supabase Edge Function `create-payment-intent`),
-   создающий `PaymentIntent` и возвращающий `client_secret`.
-3. Замените тело `presentPaymentSheet` на `initPaymentSheet` +
-   `presentPaymentSheet` из `@stripe/stripe-react-native`.
-4. Настройте `merchantIdentifier` (Apple Pay) и Google Pay в `app.json`.
+The schema enables **Row Level Security** on every table, ships an
+`is_admin()` helper and a trigger that auto-creates `profiles` on signup.
+Details — in [`supabase/README.md`](supabase/README.md).
 
 ---
 
-## Локализация
+## Stripe setup
 
-Переводы — в `i18n/{en,ru,pt-BR}.json`, инициализация — `i18n/index.ts`
-(язык подхватывается из системы, fallback — английский). В компонентах:
+In the MVP payment is simulated (`lib/stripe.ts`). For real payments:
+
+1. Add `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY` to `.env`.
+2. Deploy a backend (Supabase Edge Function `create-payment-intent`) that
+   creates a `PaymentIntent` and returns the `client_secret`.
+3. Replace the `presentPaymentSheet` body with `initPaymentSheet` +
+   `presentPaymentSheet` from `@stripe/stripe-react-native`.
+4. Configure `merchantIdentifier` (Apple Pay) and Google Pay in `app.json`
+   (the `@stripe/stripe-react-native` plugin).
+
+> **Note.** The Stripe Expo plugin is intentionally **not enabled** in
+> `app.json` so the app works in Expo Go for testing. When integrating real
+> payments, add the plugin and run a development build
+> (`npx expo prebuild` + `expo run:android`).
+
+---
+
+## Localization
+
+Translations live in `i18n/{en,ru,pt-BR}.json`, init in `i18n/index.ts`
+(language detected from the system, fallback English). In components:
 
 ```tsx
 import { useTranslation } from 'react-i18next';
@@ -279,16 +315,16 @@ const { t } = useTranslation();
 <Text>{t('home.bookRepair')}</Text>
 ```
 
-Переключение языка в рантайме — компонент `LanguageSwitcher` (в Welcome и
-Профиле).
+Runtime switching — the `LanguageSwitcher` component (used in Welcome and
+Profile).
 
 ---
 
-## Команды
+## Commands
 
 ```bash
-npm start            # Expo dev-сервер
-npm run web          # запуск в браузере
+npm start            # Expo dev server
+npm run web          # run in browser
 npm run android      # Android
 npm run ios          # iOS
 npm run typecheck    # tsc --noEmit (strict)
@@ -299,24 +335,25 @@ npm run lint         # expo lint
 
 ## Roadmap
 
-- [ ] Реальная интеграция Stripe (Edge Function + Payment Sheet)
-- [ ] Realtime-статусы записей (Supabase Realtime)
-- [ ] Загрузка фото авто в Supabase Storage
-- [ ] Карты и геолокация сервисных центров
-- [ ] Роль механика с графиком работ
-- [ ] Email/телефон-аутентификация в дополнение к OAuth
-- [ ] EAS Build и публикация в App Store / Google Play
+- [ ] Real Stripe integration (Edge Function + Payment Sheet)
+- [ ] Realtime booking statuses (Supabase Realtime)
+- [ ] Upload car photos to Supabase Storage
+- [ ] Maps and geolocation of service centres
+- [ ] Mechanic role with a personal schedule
+- [ ] Email / phone auth alongside OAuth
+- [ ] EAS Build and publishing to App Store / Google Play
 
 ---
 
-## Документация
+## Documentation
 
-- 📄 [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) — **полное ТЗ**: каждый
-  экран, компонент, модель данных, сценарии, критерии готовности. Написано
-  так, чтобы по нему мог собрать приложение как человек, так и AI-агент.
-- 📄 [`TZ.md`](TZ.md) — исходное краткое ТЗ.
-- 📄 [`supabase/README.md`](supabase/README.md) — настройка бэкенда.
+- 📄 [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) — **full spec**: every
+  screen, component, data model, scenario, acceptance criterion. Written so
+  that both a developer and an AI agent can rebuild the app from it.
+- 📄 [`TZ.md`](TZ.md) — original short spec (RU).
+- 📄 [`supabase/README.md`](supabase/README.md) — backend setup.
+- 📄 [`README.ru.md`](README.ru.md) — Russian version of this README.
 
 ---
 
-<sub>AutoDuck · сделано с 💚💛💙 в стиле Бразилии.</sub>
+<sub>AutoDuck · made with 💚💛💙 in Brazilian style.</sub>
