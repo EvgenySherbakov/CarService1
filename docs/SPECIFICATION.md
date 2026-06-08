@@ -96,9 +96,14 @@ Android, iOS.
 | Push | expo-notifications | 0.28 | `lib/notifications.ts` |
 | Градиенты | expo-linear-gradient | 13 | многие экраны |
 
-**Метро-конфиг:** `metro.config.js` содержит резолвер-shim, заменяющий
-опциональный `@opentelemetry/api` (из supabase-js) на пустой модуль — иначе
-web-сборка падает.
+**Метро-конфиг:** `metro.config.js` содержит resolver-хук с двумя правилами:
+(1) опциональный `@opentelemetry/api` (из supabase-js) подменяется пустым
+модулем, иначе web-сборка падает; (2) все импорты `zustand` (и подпути:
+`zustand/traditional`, `middleware`, `shallow`, `vanilla`, `react`, `context`)
+маршрутизируются на их CJS-файлы напрямую через `path.join`, минуя
+`exports`-резолюцию — без этого Metro подхватывает `.mjs` с `import.meta.env`,
+который не понимают ни Hermes на Android, ни классический `<script>`-тег
+веб-лоадера.
 
 **Babel-конфиг:** `babel.config.js` использует `react-native-worklets/plugin`
 (в Reanimated 4 плагин вынесен в отдельный пакет — `react-native-worklets`
