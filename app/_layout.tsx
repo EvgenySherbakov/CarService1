@@ -22,7 +22,8 @@ function AuthGate() {
     if (!hydrated) return;
     const first = segments[0];
     const inAuth = first === '(auth)';
-    if (!profile && !inAuth) {
+    const inPublic = first === '(public)';
+    if (!profile && !inAuth && !inPublic) {
       router.replace('/(auth)/welcome');
     } else if (profile && inAuth) {
       router.replace('/(tabs)');

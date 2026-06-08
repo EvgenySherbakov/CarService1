@@ -148,6 +148,8 @@ export const mockRentalCars: RentalCar[] = [
     available: true,
     rating: 4.7,
     reviewsCount: 64,
+    description:
+      'Compact and economical hatch, perfect for the city. Air conditioning, low fuel consumption and easy parking.',
   },
   {
     id: 'r2',
@@ -163,6 +165,8 @@ export const mockRentalCars: RentalCar[] = [
     available: true,
     rating: 4.8,
     reviewsCount: 41,
+    description:
+      'Stylish compact SUV with a roomy trunk and high ground clearance. Great for both city and weekend trips.',
   },
   {
     id: 'r3',
@@ -178,6 +182,8 @@ export const mockRentalCars: RentalCar[] = [
     available: true,
     rating: 4.9,
     reviewsCount: 87,
+    description:
+      'Fully electric premium sedan with autopilot, instant acceleration and a long range. Zero emissions.',
   },
   {
     id: 'r4',
@@ -193,6 +199,8 @@ export const mockRentalCars: RentalCar[] = [
     available: true,
     rating: 4.8,
     reviewsCount: 52,
+    description:
+      'Hybrid crossover combining low consumption with comfort. Spacious cabin and modern safety features.',
   },
   {
     id: 'r5',
@@ -208,6 +216,8 @@ export const mockRentalCars: RentalCar[] = [
     available: false,
     rating: 4.4,
     reviewsCount: 31,
+    description:
+      'Ultra-affordable city car with manual transmission. The cheapest way to get around town.',
   },
 ];
 

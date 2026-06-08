@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Image, Platform, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -9,8 +10,15 @@ import { Palette, Radius, Shadow, Spacing, Typography } from '@/constants/theme'
 import { signInWithProvider } from '@/lib/auth';
 import { useAuthStore } from '@/store/auth';
 
+const guestLinks = [
+  { key: 'contacts', icon: '📞', href: '/contact' },
+  { key: 'fleet', icon: '🚗', href: '/fleet' },
+  { key: 'about', icon: 'ℹ️', href: '/about' },
+] as const;
+
 export default function Welcome() {
   const { t } = useTranslation();
+  const router = useRouter();
   const setProfile = useAuthStore((s) => s.setProfile);
   const [loading, setLoading] = useState<'google' | 'apple' | null>(null);
 
@@ -92,6 +100,24 @@ export default function Welcome() {
               textColor={Palette.white}
               icon={<AppleIcon />}
             />
+          </View>
+
+          <View style={styles.guestBlock}>
+            <Text style={styles.guestLabel}>{t('guestMenu.explore')}</Text>
+            <View style={styles.guestRow}>
+              {guestLinks.map((link) => (
+                <Pressable
+                  key={link.key}
+                  onPress={() => router.push(link.href)}
+                  style={styles.guestItem}
+                >
+                  <Text style={{ fontSize: 20 }}>{link.icon}</Text>
+                  <Text style={styles.guestItemText} numberOfLines={1}>
+                    {t(`guestMenu.${link.key}` as const)}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
           </View>
 
           <Text style={styles.terms}>{t('auth.terms')}</Text>
@@ -231,4 +257,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     lineHeight: 18,
   },
+  guestBlock: { marginTop: Spacing.lg, gap: Spacing.xs },
+  guestLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.8)',
+    textAlign: 'center',
+  },
+  guestRow: { flexDirection: 'row', gap: Spacing.xs },
+  guestItem: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.lg,
+    backgroundColor: 'rgba(255,255,255,0.14)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.18)',
+  },
+  guestItemText: { fontSize: 12, fontWeight: '600', color: Palette.white },
 });

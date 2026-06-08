@@ -31,6 +31,12 @@
 
 ## Возможности
 
+### Без регистрации (гостевой доступ)
+С экрана входа доступны публичные страницы:
+- 📞 **Контакты** — телефоны, WhatsApp, email, адрес, карта
+- 🚗 **Автопарк** — каталог авто для аренды с описанием и ценой «от»
+- ℹ️ **О компании** — история, владельцы и директор, галерея автосервиса
+
 ### Для клиента
 - 🔐 Вход через **Google** и **Apple** (Supabase OAuth)
 - 🔧 **Запись на ремонт** — каталог услуг, выбор авто, даты, времени, комментарий
@@ -55,6 +61,9 @@
 | Группа | Экран | Файл |
 |--------|-------|------|
 | Auth | Welcome / вход | `app/(auth)/welcome.tsx` |
+| Публичный | Контакты | `app/(public)/contact.tsx` |
+| Публичный | Автопарк (аренда) | `app/(public)/fleet.tsx` |
+| Публичный | О компании | `app/(public)/about.tsx` |
 | Клиент | Главная (Dashboard) | `app/(tabs)/index.tsx` |
 | Клиент | Услуги (ремонт/мойка) | `app/(tabs)/services.tsx` |
 | Клиент | Аренда | `app/(tabs)/rentals.tsx` |
@@ -153,7 +162,12 @@ CarService1/
 │   ├── index.tsx              # Редирект на (tabs) или (auth)
 │   ├── (auth)/
 │   │   ├── _layout.tsx
-│   │   └── welcome.tsx        # Вход Google/Apple
+│   │   └── welcome.tsx        # Вход Google/Apple + гостевые ссылки
+│   ├── (public)/              # Публичные страницы (без регистрации)
+│   │   ├── _layout.tsx
+│   │   ├── contact.tsx        # Контакты + карта
+│   │   ├── fleet.tsx          # Автопарк для аренды
+│   │   └── about.tsx          # О компании / команда / галерея
 │   ├── (tabs)/                # Клиентская оболочка (AppShell)
 │   │   ├── _layout.tsx        # AppShell + Slot
 │   │   ├── index.tsx          # Главная / Dashboard
@@ -187,7 +201,8 @@ CarService1/
 │   ├── auth.ts                # OAuth, профиль
 │   ├── stripe.ts              # Оплата (mock-ready), formatAmount
 │   ├── notifications.ts       # Push-напоминания
-│   └── mock-data.ts           # Демоданные
+│   ├── mock-data.ts           # Демоданные
+│   └── company-data.ts        # Контент публичных страниц
 ├── store/
 │   ├── auth.ts                # Zustand: профиль, сессия
 │   └── booking.ts             # Zustand: записи, аренды, черновики

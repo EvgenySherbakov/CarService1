@@ -177,6 +177,9 @@ Expo Router, file-based. Корневой layout — `Stack` без хедера
 |---------|------|-----------|--------|
 | `/` | `app/index.tsx` | редирект в `(tabs)` или `(auth)` | все |
 | `/(auth)/welcome` | `app/(auth)/welcome.tsx` | вход | гость |
+| `/contact` | `app/(public)/contact.tsx` | контакты (телефоны, WhatsApp, адрес, карта) | **публичный** |
+| `/fleet` | `app/(public)/fleet.tsx` | каталог авто для аренды (описание, цена от) | **публичный** |
+| `/about` | `app/(public)/about.tsx` | о компании, команда, галерея | **публичный** |
 | `/(tabs)` → `/` | `app/(tabs)/index.tsx` | Главная (Dashboard) | client |
 | `/services` | `app/(tabs)/services.tsx` | каталог услуг | client |
 | `/rentals` | `app/(tabs)/rentals.tsx` | каталог авто | client |
@@ -188,8 +191,10 @@ Expo Router, file-based. Корневой layout — `Stack` без хедера
 | `/admin` | `app/admin/index.tsx` | админ-дашборд | admin |
 
 **AuthGate** (`app/_layout.tsx`): следит за `profile` из `useAuthStore`.
-Нет профиля и не в `(auth)` → `replace('/(auth)/welcome')`. Есть профиль и в
-`(auth)` → `replace('/(tabs)')`.
+Нет профиля и не в `(auth)` и не в `(public)` → `replace('/(auth)/welcome')`.
+Есть профиль и в `(auth)` → `replace('/(tabs)')`. Группа **`(public)`**
+(контакты, автопарк, о компании) доступна **без регистрации** как гостям, так
+и авторизованным пользователям.
 
 **Потоки** (`booking`/`rental`/`checkout`) открываются поверх оболочки
 (push в корневом стеке), имеют собственный `FlowHeader` с кнопкой «назад».
@@ -214,7 +219,12 @@ Service   { id, categoryId, type, name, description, priceFrom, durationMinutes,
             imageUrl, rating, reviewsCount }
 RentalCar { id, make, model, year, transmission('automatic'|'manual'),
             fuel('petrol'|'diesel'|'electric'|'hybrid'), seats, pricePerDay,
-            depositAmount, imageUrl, available, rating, reviewsCount }
+            depositAmount, imageUrl, available, rating, reviewsCount,
+            description? }
+TeamMember  { id, name, roleKey, photoUrl }
+CompanyInfo { name, legalName, foundedYear, phones[], whatsapp, email,
+              address, mapQuery, mapImageUrl, heroImageUrl, gallery[],
+              team: TeamMember[], stats{years,clients,cars,rating} }
 BookingStatus = 'pending'|'confirmed'|'in_progress'|'completed'|'cancelled'
 Booking   { id, clientId, serviceId, service?, vehicleId?, scheduledAt, status,
             notes?, totalAmount, paymentId?, createdAt }
@@ -260,13 +270,62 @@ rentals, payments, reviews, push_tokens`.
   - заголовок `auth.welcomeTitle`, подзаголовок `auth.welcomeSubtitle`;
   - кнопка **Google** (`variant="accent"`, иконка «G» в плашке);
   - кнопка **Apple** (чёрная, белый текст через `textColor`, иконка 🍏);
+  - **блок гостевого доступа** (`guestMenu.explore`) — ряд из трёх кнопок без
+    регистрации: **Контакты** → `/contact`, **Автопарк** → `/fleet`,
+    **О компании** → `/about`;
   - текст соглашения `auth.terms`.
 - **Состояния:** `loading: 'google' | 'apple' | null` (спиннер на нажатой кнопке).
-- **Взаимодействия:** нажатие вызывает `signInWithProvider(provider)`; при
-  успехе `setProfile(profile)` → AuthGate уводит в `(tabs)`.
-- **i18n:** `brand.*`, `auth.*`.
+- **Взаимодействия:** вход → `signInWithProvider(provider)` → `setProfile` →
+  `(tabs)`; гостевые кнопки → `router.push` на публичные страницы.
+- **i18n:** `brand.*`, `auth.*`, `guestMenu.*`.
 - **Критерии приёмки:** обе кнопки видимы и читаемы (текст не пропадает);
-  на десктопе контент по центру; смена языка мгновенно меняет тексты.
+  на десктопе контент по центру; смена языка мгновенно меняет тексты; с
+  Welcome можно открыть контакты/автопарк/о компании **без входа**.
+
+### 8.1.1 Контакты (публичный)
+
+- **Маршрут / файл:** `/contact` · `app/(public)/contact.tsx` · доступ — гость+
+- **Цель:** способы связи и расположение AutoDuck.
+- **Раскладка:** `FlowHeader` (назад) + `Page` + `PageHeader`.
+- **Элементы:** карточка-список — телефоны (tap → `tel:`), WhatsApp
+  (tap → `wa.me`), email (tap → `mailto:`), адрес, часы работы; ниже —
+  «Как нас найти»: карточка с картинкой карты + кнопка `contact.openMaps`
+  (открывает Google Maps по `mapQuery` через `Linking`).
+- **Данные:** `companyInfo` (`lib/company-data.ts`).
+- **i18n:** `contact.*`.
+- **Критерии приёмки:** доступна без входа; телефон/WhatsApp/почта/карта
+  открываются внешними приложениями; кнопка «назад» возвращает на Welcome.
+
+### 8.1.2 Автопарк (публичный)
+
+- **Маршрут / файл:** `/fleet` · `app/(public)/fleet.tsx` · доступ — гость+
+- **Цель:** показать гостю авто для аренды с описанием и начальной ценой.
+- **Раскладка:** `FlowHeader` + `Page` + `PageHeader` + `Grid` карточек
+  (desktop 2 / mobile 1) + карточка-CTA внизу.
+- **Элементы карточки:** фото, badge «недоступно» при `available=false`,
+  название, спецификации, **описание** (`car.description`), цена
+  «от {pricePerDay} / сутки». Внизу страницы — `fleet.note` + кнопка
+  `fleet.loginToRent` → `/(auth)/welcome`.
+- **Данные:** `mockRentalCars`.
+- **i18n:** `fleet.*`, `common.from/perDay`, `rentals.seats`.
+- **Критерии приёмки:** доступна без входа; видны описание и начальная цена;
+  бронирование доступно только после входа.
+
+### 8.1.3 О компании (публичный)
+
+- **Маршрут / файл:** `/about` · `app/(public)/about.tsx` · доступ — гость+
+- **Цель:** рассказ о компании, команде и автосервисе.
+- **Раскладка:** `FlowHeader` + `Page`.
+- **Элементы:** hero-фото сервиса с градиентом и заголовком; ряд из 4
+  статистик (лет на рынке, клиентов, авто в парке, рейтинг); секция «Наша
+  история» (`about.description` + `about.mission`); «Наша команда» — `Grid`
+  карточек (фото, имя, роль через `member.roleKey`); «Наш автосервис» —
+  `Grid`-галерея фото.
+- **Данные:** `companyInfo` (heroImageUrl, stats, team, gallery).
+- **i18n:** `about.*` (включая роли `roleFounder/roleCoFounder/roleDirector/
+  roleLeadMechanic` и `statYears/statClients/statCars/statRating`).
+- **Критерии приёмки:** доступна без входа; показаны описание компании,
+  владельцы/директор и фото сервиса.
 
 ### 8.2 Главная / Dashboard
 
@@ -480,6 +539,7 @@ rentals, payments, reviews, push_tokens`.
 | `lib/stripe.ts` | `presentPaymentSheet`, `formatAmount` | имитирует успешную оплату (`pi_mock_*`) |
 | `lib/notifications.ts` | `ensureNotificationPermissions`, `scheduleBookingReminder` | на web — no-op |
 | `lib/mock-data.ts` | демоданные | источник всех каталогов/записей |
+| `lib/company-data.ts` | `companyInfo: CompanyInfo` | контент публичных страниц (контакты, команда, галерея, статистика) |
 
 **Переключение mock → live:** `Config.useMock` становится `false`, когда задан
 `EXPO_PUBLIC_SUPABASE_URL` и `EXPO_PUBLIC_USE_MOCK=false`. Тогда `lib/*`
@@ -524,8 +584,8 @@ type PaymentSheetResult =
 - Языки: `en` (fallback), `ru`, `pt-BR`. Файлы `i18n/{lang}.json`.
 - Инициализация — `i18n/index.ts`: язык из `expo-localization`, иначе fallback.
 - Доступ — `useTranslation()` → `t('namespace.key')`.
-- Неймспейсы ключей: `brand, common, auth, tabs, home, services, rentals,
-  checkout, bookings, profile, review, admin`.
+- Неймспейсы ключей: `brand, common, auth, guestMenu, contact, fleet, about,
+  tabs, home, services, rentals, checkout, bookings, profile, review, admin`.
 - **Правило:** любой видимый текст — только через `t()`. Новые строки
   добавлять во все три файла одновременно (одинаковые ключи).
 
@@ -593,8 +653,11 @@ Expo-конфиг — `app.json`: `scheme: carservice1`, bundle id
 9. **Доменные карточки.** `ServiceCard`, `CarCard`, `BookingCard`.
 10. **Роутинг.** `app/_layout.tsx` (Stack + AuthGate), `app/index.tsx`
     (редирект), `app/(auth)/*`, `app/(tabs)/_layout.tsx` (AppShell+Slot) (§6).
-11. **Экраны клиента.** `(auth)/welcome`, `(tabs)/index|services|rentals|
-    bookings|profile` по §8.1–8.6.
+11. **Экраны клиента.** `(auth)/welcome` (с гостевыми ссылками),
+    `(tabs)/index|services|rentals|bookings|profile` по §8.1–8.6.
+11a. **Публичные страницы.** `lib/company-data.ts`, группа `app/(public)/`
+    (`contact`, `fleet`, `about`) по §8.1.1–8.1.3; разрешить `(public)` в
+    AuthGate.
 12. **Потоки.** `booking/[serviceId]`, `rental/[carId]`, `checkout/[type]`
     по §8.7–8.9.
 13. **Админка.** `admin/_layout.tsx`, `admin/index.tsx` по §8.10.

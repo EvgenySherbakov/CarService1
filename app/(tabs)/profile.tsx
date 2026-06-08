@@ -94,7 +94,8 @@ export default function ProfileScreen() {
           onPress={() => Linking.openURL(`mailto:${Config.supportEmail}`)}
           border
         />
-        <MenuRow icon="ℹ️" label={t('profile.about')} onPress={() => {}} border />
+        <MenuRow icon="📞" label={t('contact.title')} onPress={() => router.push('/contact')} border />
+        <MenuRow icon="ℹ️" label={t('profile.about')} onPress={() => router.push('/about')} border />
       </Card>
 
       <Button title={t('auth.signOut')} variant="outline" onPress={handleSignOut} />
