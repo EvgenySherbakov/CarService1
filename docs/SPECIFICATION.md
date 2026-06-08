@@ -340,8 +340,12 @@ rentals, payments, reviews, push_tokens`.
 ### 8.2 Главная / Dashboard
 
 - **Маршрут / файл:** `/` (в `(tabs)`) · `app/(tabs)/index.tsx`
-- **Цель:** точка входа клиента: приветствие, быстрые действия, рекомендации.
-- **Раскладка:** `Page` (скролл, центрирование). Без горизонтальных каруселей.
+- **Цель:** точка входа клиента: приветствие, быстрые действия, состояние
+  визитов (предстоящих и прошедших). Без витрин «популярных услуг» и
+  «доступных авто» — они доступны на отдельных вкладках через быстрые
+  действия.
+- **Раскладка:** `Page` (скролл, центрирование). Без горизонтальных каруселей
+  и без витринных сеток с каталогом.
 - **Элементы (сверху вниз):**
   1. `PageHeader` — приветствие `home.greeting {name}` + слоган, справа аватар-инициал.
   2. Hero-градиент (`primary→secondary`): badge «★ Premium», `home.promoTitle`,
@@ -349,15 +353,33 @@ rentals, payments, reviews, push_tokens`.
   3. Секция «Быстрые действия» (`home.quickActions`) — 3 карточки в ряд:
      `bookRepair → /services?type=repair`, `bookWash → /services?type=wash`,
      `rentCar → /rentals`.
-  4. (Если есть предстоящие записи) секция `bookings.upcoming` — карточка
-     ближайшей записи → `/bookings`.
-  5. «Популярные услуги» (`home.featuredServices`) — `Grid` из 3 `ServiceCard`
-     (desktop 3 кол. / mobile 1) → `/booking/[id]`.
-  6. «Доступные авто» (`home.featuredCars`) — `Grid` из 3 `CarCard` → `/rental/[id]`.
-- **Источник данных:** `mockServices`, `mockRentalCars`, `useBookingStore`.
-- **i18n:** `home.*`, `bookings.upcoming`.
-- **Критерии приёмки:** число колонок зависит от ширины; «Смотреть все» ведёт
-  на нужный таб; ближайшая запись показывается только при наличии.
+  4. **«Предстоящие визиты»** (`home.upcomingVisits`) — объединённый список
+     ближайших бронирований и аренд (до 3 элементов), отсортированный по
+     дате возрастания. Каждый элемент — `VisitRow`: иконка (🔧/🚗),
+     название, дата/период, бейдж статуса, сумма. При пустом списке —
+     `Card` с текстом `home.noUpcoming`. Тап по элементу — переход в
+     соответствующий flow (`/booking/[serviceId]` или `/rental/[carId]`).
+  5. **«История посещений»** (`home.visitHistory`) — прошедшие или
+     отменённые/завершённые визиты (до 4 элементов), сортировка по дате
+     убывания. Та же `VisitRow`-карточка. При пустоте — `Card` с
+     `home.noHistory`.
+- **Источник данных:** `useBookingStore` (`bookings` + `rentals`).
+- **Логика разбиения visits:**
+  - «Предстоящие» — `scheduledAt/startDate >= now` И статус ∈ {pending,
+    confirmed, in_progress}; берутся первые 3.
+  - «История» — `scheduledAt/startDate < now` ИЛИ статус ∈ {completed,
+    cancelled}; берутся первые 4.
+- **Компонент `VisitRow`** определён внутри файла, принимает `item:
+  VisitItem` (объединённый тип `booking | rental`), `locale`, `onPress`,
+  `t`. Использует `Card variant="elevated"`.
+- **i18n:** `home.greeting`, `home.guest`, `home.quickActions`,
+  `home.bookRepair`, `home.bookWash`, `home.rentCar`, `home.viewAll`,
+  `home.promoTitle`, `home.promoSubtitle`, `home.upcomingVisits`,
+  `home.visitHistory`, `home.rental`, `home.noUpcoming`, `home.noHistory`,
+  `bookings.status.*`.
+- **Критерии приёмки:** на главной нет каталога услуг/авто; обе секции
+  показывают объединённые bookings + rentals; «Смотреть все» появляется
+  только при непустом списке и ведёт на `/bookings`.
 
 ### 8.3 Услуги (каталог)
 

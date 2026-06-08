@@ -92,11 +92,14 @@
     "bookRepair": "Book repair",
     "bookWash": "Book a wash",
     "rentCar": "Rent a car",
-    "featuredServices": "Featured services",
-    "featuredCars": "Available cars",
     "viewAll": "View all",
     "promoTitle": "Brazilian quality service",
-    "promoSubtitle": "Premium care for your car"
+    "promoSubtitle": "Premium care for your car",
+    "upcomingVisits": "Upcoming visits",
+    "visitHistory": "Visit history",
+    "rental": "Rental",
+    "noUpcoming": "No upcoming visits — book a slot from the actions above.",
+    "noHistory": "Your past visits will appear here."
   },
   "services": {
     "title": "Services",

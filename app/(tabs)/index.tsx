@@ -4,18 +4,14 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Page } from '@/components/layout/Page';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { Grid } from '@/components/layout/Grid';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { ServiceCard } from '@/components/ServiceCard';
-import { CarCard } from '@/components/CarCard';
 import { SectionHeader } from '@/components/SectionHeader';
-import { useResponsive } from '@/hooks/useResponsive';
 import { useAuthStore } from '@/store/auth';
 import { useBookingStore } from '@/store/booking';
-import { mockRentalCars, mockServices, mockVehicles } from '@/lib/mock-data';
 import { formatAmount } from '@/lib/currency';
 import { Palette, Radius, Shadow, Spacing, Typography } from '@/constants/theme';
+import type { Booking, BookingStatus, Rental } from '@/types';
 
 const quickActions = [
   { key: 'bookRepair', icon: '🔧', tint: Palette.primary, route: '/services?type=repair' },
@@ -23,19 +19,43 @@ const quickActions = [
   { key: 'rentCar', icon: '🚗', tint: Palette.accentDark, route: '/rentals' },
 ] as const;
 
+const UPCOMING_STATUSES: BookingStatus[] = ['pending', 'confirmed', 'in_progress'];
+const PAST_STATUSES: BookingStatus[] = ['completed', 'cancelled'];
+
+type VisitItem =
+  | { kind: 'booking'; date: Date; data: Booking }
+  | { kind: 'rental'; date: Date; data: Rental };
+
 export default function HomeScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
-  const { isDesktop } = useResponsive();
   const profile = useAuthStore((s) => s.profile);
   const bookings = useBookingStore((s) => s.bookings);
+  const rentals = useBookingStore((s) => s.rentals);
 
-  const cols = isDesktop ? 3 : 1;
-  const featuredServices = mockServices.slice(0, 3);
-  const availableCars = mockRentalCars.filter((c) => c.available).slice(0, 3);
-  const upcoming = bookings.filter(
-    (b) => b.status === 'confirmed' || b.status === 'pending',
-  );
+  const now = Date.now();
+  const visits: VisitItem[] = [
+    ...bookings.map<VisitItem>((b) => ({
+      kind: 'booking',
+      date: new Date(b.scheduledAt),
+      data: b,
+    })),
+    ...rentals.map<VisitItem>((r) => ({
+      kind: 'rental',
+      date: new Date(r.startDate),
+      data: r,
+    })),
+  ];
+
+  const upcoming = visits
+    .filter((v) => v.date.getTime() >= now && UPCOMING_STATUSES.includes(v.data.status))
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
+    .slice(0, 3);
+
+  const history = visits
+    .filter((v) => v.date.getTime() < now || PAST_STATUSES.includes(v.data.status))
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .slice(0, 4);
 
   return (
     <Page>
@@ -89,64 +109,141 @@ export default function HomeScreen() {
         ))}
       </View>
 
-      {upcoming.length > 0 && (
-        <>
-          <SectionHeader
-            title={t('bookings.upcoming')}
-            actionLabel={t('home.viewAll')}
-            onAction={() => router.push('/bookings')}
-          />
-          <Card onPress={() => router.push('/bookings')} variant="elevated">
-            <View style={styles.upcomingRow}>
-              <View style={styles.upcomingIcon}>
-                <Text style={{ fontSize: 22 }}>📅</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={[Typography.bodyBold]} numberOfLines={1}>
-                  {upcoming[0].service?.name}
-                </Text>
-                <Text style={[Typography.small, { color: Palette.textSecondary }]}>
-                  {new Date(upcoming[0].scheduledAt).toLocaleString()}
-                </Text>
-              </View>
-              <Text style={[Typography.bodyBold, { color: Palette.primary }]}>
-                {formatAmount(upcoming[0].totalAmount)}
-              </Text>
-            </View>
-          </Card>
-        </>
+      <SectionHeader
+        title={t('home.upcomingVisits')}
+        actionLabel={upcoming.length > 0 ? t('home.viewAll') : undefined}
+        onAction={upcoming.length > 0 ? () => router.push('/bookings') : undefined}
+      />
+      {upcoming.length === 0 ? (
+        <Card padded>
+          <Text style={[Typography.caption, { color: Palette.textSecondary, textAlign: 'center' }]}>
+            {t('home.noUpcoming')}
+          </Text>
+        </Card>
+      ) : (
+        <View style={{ gap: Spacing.sm }}>
+          {upcoming.map((v) => (
+            <VisitRow
+              key={`${v.kind}-${v.data.id}`}
+              item={v}
+              locale={i18n.language}
+              onPress={() =>
+                v.kind === 'booking'
+                  ? router.push(`/booking/${v.data.serviceId}`)
+                  : router.push(`/rental/${v.data.carId}`)
+              }
+              t={t}
+            />
+          ))}
+        </View>
       )}
 
       <SectionHeader
-        title={t('home.featuredServices')}
-        actionLabel={t('home.viewAll')}
-        onAction={() => router.push('/services')}
+        title={t('home.visitHistory')}
+        actionLabel={history.length > 0 ? t('home.viewAll') : undefined}
+        onAction={history.length > 0 ? () => router.push('/bookings') : undefined}
       />
-      <Grid
-        data={featuredServices}
-        columns={cols}
-        keyExtractor={(s) => s.id}
-        renderItem={(item) => (
-          <ServiceCard service={item} onPress={() => router.push(`/booking/${item.id}`)} />
-        )}
-      />
-
-      <SectionHeader
-        title={t('home.featuredCars')}
-        actionLabel={t('home.viewAll')}
-        onAction={() => router.push('/rentals')}
-      />
-      <Grid
-        data={availableCars}
-        columns={cols}
-        keyExtractor={(c) => c.id}
-        renderItem={(item) => (
-          <CarCard car={item} onPress={() => router.push(`/rental/${item.id}`)} />
-        )}
-      />
+      {history.length === 0 ? (
+        <Card padded>
+          <Text style={[Typography.caption, { color: Palette.textSecondary, textAlign: 'center' }]}>
+            {t('home.noHistory')}
+          </Text>
+        </Card>
+      ) : (
+        <View style={{ gap: Spacing.sm }}>
+          {history.map((v) => (
+            <VisitRow
+              key={`${v.kind}-${v.data.id}`}
+              item={v}
+              locale={i18n.language}
+              onPress={() =>
+                v.kind === 'booking'
+                  ? router.push(`/booking/${v.data.serviceId}`)
+                  : router.push(`/rental/${v.data.carId}`)
+              }
+              t={t}
+            />
+          ))}
+        </View>
+      )}
     </Page>
   );
 }
+
+const STATUS_TONE: Record<BookingStatus, 'success' | 'info' | 'warning' | 'danger' | 'neutral'> = {
+  pending: 'warning',
+  confirmed: 'info',
+  in_progress: 'info',
+  completed: 'success',
+  cancelled: 'danger',
+};
+
+const STATUS_KEY: Record<BookingStatus, string> = {
+  pending: 'bookings.status.pending',
+  confirmed: 'bookings.status.confirmed',
+  in_progress: 'bookings.status.inProgress',
+  completed: 'bookings.status.completed',
+  cancelled: 'bookings.status.cancelled',
+};
+
+type T = ReturnType<typeof useTranslation>['t'];
+
+function VisitRow({
+  item,
+  locale,
+  onPress,
+  t,
+}: {
+  item: VisitItem;
+  locale: string;
+  onPress: () => void;
+  t: T;
+}) {
+  const isRental = item.kind === 'rental';
+  const title = isRental
+    ? `${item.data.car?.make ?? ''} ${item.data.car?.model ?? ''}`.trim() || t('home.rental')
+    : item.data.service?.name ?? t('services.service');
+  const subtitle = isRental
+    ? `${new Date(item.data.startDate).toLocaleDateString(locale)} – ${new Date(
+        item.data.endDate,
+      ).toLocaleDateString(locale)}`
+    : item.date.toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' });
+  const icon = isRental ? '🚗' : '🔧';
+
+  return (
+    <Card onPress={onPress} variant="elevated">
+      <View style={visitStyles.row}>
+        <View style={visitStyles.icon}>
+          <Text style={{ fontSize: 22 }}>{icon}</Text>
+        </View>
+        <View style={{ flex: 1, gap: 2 }}>
+          <Text style={[Typography.bodyBold]} numberOfLines={1}>
+            {title}
+          </Text>
+          <Text style={[Typography.small, { color: Palette.textSecondary }]}>{subtitle}</Text>
+        </View>
+        <View style={{ alignItems: 'flex-end', gap: Spacing.xxs }}>
+          <Badge label={t(STATUS_KEY[item.data.status])} tone={STATUS_TONE[item.data.status]} />
+          <Text style={[Typography.bodyBold, { color: Palette.primary }]}>
+            {formatAmount(item.data.totalAmount)}
+          </Text>
+        </View>
+      </View>
+    </Card>
+  );
+}
+
+const visitStyles = StyleSheet.create({
+  row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  icon: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: Palette.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 const styles = StyleSheet.create({
   avatar: {
@@ -182,15 +279,6 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  upcomingRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  upcomingIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    backgroundColor: Palette.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },

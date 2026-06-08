@@ -92,11 +92,14 @@
     "bookRepair": "Agendar reparo",
     "bookWash": "Agendar lavagem",
     "rentCar": "Alugar carro",
-    "featuredServices": "Serviços em destaque",
-    "featuredCars": "Carros disponíveis",
     "viewAll": "Ver todos",
     "promoTitle": "Qualidade brasileira em serviços",
-    "promoSubtitle": "Cuidado premium para o seu carro"
+    "promoSubtitle": "Cuidado premium para o seu carro",
+    "upcomingVisits": "Próximas visitas",
+    "visitHistory": "Histórico de visitas",
+    "rental": "Aluguel",
+    "noUpcoming": "Sem visitas agendadas — reserve um horário pelas ações rápidas acima.",
+    "noHistory": "Suas visitas anteriores aparecerão aqui."
   },
   "services": {
     "title": "Serviços",
