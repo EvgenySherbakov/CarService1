@@ -85,8 +85,8 @@
 
 | Слой | Технология | Назначение |
 |------|-----------|-----------|
-| UI / Runtime | React Native `0.74` + Expo SDK `51` | единый код Web/iOS/Android |
-| Роутинг | Expo Router `v3` (file-based) | навигация по файловой структуре |
+| UI / Runtime | React Native `0.81` + Expo SDK `54` | единый код Web/iOS/Android |
+| Роутинг | Expo Router `v6` (file-based) | навигация по файловой структуре |
 | Язык | TypeScript (strict) | типобезопасность |
 | Состояние (клиент) | Zustand | auth-стор, booking-стор |
 | Серверное состояние | TanStack React Query | кеш запросов к Supabase |

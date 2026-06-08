@@ -84,10 +84,10 @@ Android, iOS.
 
 | Слой | Технология | Версия | Файлы |
 |------|-----------|--------|-------|
-| Runtime/UI | React Native | 0.74.x | весь `app/`, `components/` |
-| Платформа | Expo SDK | 51 | `app.json`, `package.json` |
-| Роутинг | Expo Router | 3.5.x | `app/**` |
-| Язык | TypeScript (strict) | 5.3 | `tsconfig.json` |
+| Runtime/UI | React Native | 0.81.x | весь `app/`, `components/` |
+| Платформа | Expo SDK | 54 | `app.json`, `package.json` |
+| Роутинг | Expo Router | 6.0.x | `app/**` |
+| Язык | TypeScript (strict) | 5.9 | `tsconfig.json` |
 | Локальное состояние | Zustand | 4.5 | `store/` |
 | Серверное состояние | TanStack React Query | 5 | `app/_layout.tsx` |
 | Бэкенд | Supabase JS | 2.45 | `lib/supabase.ts`, `supabase/` |
@@ -99,6 +99,10 @@ Android, iOS.
 **Метро-конфиг:** `metro.config.js` содержит резолвер-shim, заменяющий
 опциональный `@opentelemetry/api` (из supabase-js) на пустой модуль — иначе
 web-сборка падает.
+
+**Babel-конфиг:** `babel.config.js` использует `react-native-worklets/plugin`
+(в Reanimated 4 плагин вынесен в отдельный пакет — `react-native-worklets`
+обязательная зависимость).
 
 ---
 

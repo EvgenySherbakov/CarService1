@@ -1,10 +1,10 @@
-import { Pressable, StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, type StyleProp, type ViewProps, type ViewStyle } from 'react-native';
 import { Palette, Radius, Shadow, Spacing } from '@/constants/theme';
 
-type Props = ViewProps & {
+type Props = Omit<ViewProps, 'style'> & {
   onPress?: () => void;
   padded?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   variant?: 'default' | 'elevated' | 'flat';
 };
 

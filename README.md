@@ -85,8 +85,8 @@ Detailed per-screen specs, states and acceptance criteria — in
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| UI / Runtime | React Native `0.74` + Expo SDK `51` | unified Web/iOS/Android code |
-| Routing | Expo Router `v3` (file-based) | navigation through the file tree |
+| UI / Runtime | React Native `0.81` + Expo SDK `54` | unified Web/iOS/Android code |
+| Routing | Expo Router `v6` (file-based) | navigation through the file tree |
 | Language | TypeScript (strict) | type safety |
 | Client state | Zustand | auth store, booking store |
 | Server state | TanStack React Query | Supabase query cache |
