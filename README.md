@@ -359,6 +359,9 @@ npm run lint         # expo lint
 - 📄 [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) — **full spec**: every
   screen, component, data model, scenario, acceptance criterion. Written so
   that both a developer and an AI agent can rebuild the app from it.
+- 📄 [`docs/CONTENT.md`](docs/CONTENT.md) — **content management guide**: how
+  to change prices, photos, car names, add services and cars; both for the
+  mock mode (edit code) and the Supabase Dashboard.
 - 📄 [`TZ.md`](TZ.md) — original short spec (RU).
 - 📄 [`supabase/README.md`](supabase/README.md) — backend setup.
 - 📄 [`README.ru.md`](README.ru.md) — Russian version of this README.
