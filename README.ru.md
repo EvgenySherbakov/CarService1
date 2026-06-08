@@ -277,6 +277,15 @@ CarService1/
    `EXPO_PUBLIC_SUPABASE_ANON_KEY`, поставьте `EXPO_PUBLIC_USE_MOCK=false`.
 5. Перезапустите `npx expo start` — приложение переключится на живые данные.
 
+Чтобы проверить, что всё применилось правильно:
+
+```bash
+npm run check:supabase -- https://ВАШ.supabase.co ВАШ_ANON_KEY
+```
+
+Скрипт покажет, какие таблицы есть, сколько в них строк, защищены ли
+приватные таблицы RLS и включены ли провайдеры Google/Apple.
+
 Схема использует **Row Level Security** на всех таблицах, функцию
 `is_admin()` и триггер автосоздания `profiles` при регистрации. Детали — в
 [`supabase/README.md`](supabase/README.md).

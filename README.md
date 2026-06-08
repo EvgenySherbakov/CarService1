@@ -279,6 +279,15 @@ CarService1/
    `EXPO_PUBLIC_SUPABASE_ANON_KEY`, set `EXPO_PUBLIC_USE_MOCK=false`.
 5. Restart `npx expo start` — the app switches to live data.
 
+To verify everything is wired up correctly:
+
+```bash
+npm run check:supabase -- https://YOUR.supabase.co YOUR_ANON_KEY
+```
+
+The script lists which tables exist, how many rows they contain, whether
+RLS protects the private ones, and whether Google/Apple providers are on.
+
 The schema enables **Row Level Security** on every table, ships an
 `is_admin()` helper and a trigger that auto-creates `profiles` on signup.
 Details — in [`supabase/README.md`](supabase/README.md).

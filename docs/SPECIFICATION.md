@@ -540,6 +540,7 @@ rentals, payments, reviews, push_tokens`.
 | `lib/notifications.ts` | `ensureNotificationPermissions`, `scheduleBookingReminder` | на web — no-op |
 | `lib/mock-data.ts` | демоданные | источник всех каталогов/записей |
 | `lib/company-data.ts` | `companyInfo: CompanyInfo` | контент публичных страниц (контакты, команда, галерея, статистика) |
+| `scripts/check-supabase.mjs` | CLI-проверка готовности БД | запускается локально: `npm run check:supabase -- <URL> <ANON_KEY>`; проверяет доступность таблиц каталога, что приватные таблицы защищены RLS, и включены ли провайдеры OAuth. Не требует зависимостей (Node 18+). |
 
 **Переключение mock → live:** `Config.useMock` становится `false`, когда задан
 `EXPO_PUBLIC_SUPABASE_URL` и `EXPO_PUBLIC_USE_MOCK=false`. Тогда `lib/*`
