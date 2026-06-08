@@ -137,6 +137,23 @@
     "deposit": "Deposit (hold)",
     "rentalTotal": "Rental total"
   },
+  "booking": {
+    "paymentMethod": "Payment method",
+    "payNow": "Pay now",
+    "payNowDescription": "Pay with card, Apple Pay or Google Pay — your booking is fully confirmed.",
+    "payAtOffice": "Pay at the office",
+    "payAtOfficeDescription": "Just reserve the slot. Settle the bill at AutoDuck when you arrive — cash or card.",
+    "confirmBooking": "Confirm booking",
+    "confirmRental": "Confirm rental",
+    "continueToPayment": "Continue to payment",
+    "submitting": "Confirming…",
+    "successTitle": "Booking confirmed",
+    "successSubtitleOffice": "We saved your slot. Payment will be processed at the office.",
+    "successSubtitlePaid": "Payment received. Your booking is fully confirmed.",
+    "successCallNote": "We may call to confirm — please answer 🙂",
+    "viewBookings": "View my bookings",
+    "backToHome": "Back to home"
+  },
   "checkout": {
     "title": "Checkout",
     "payment": "Payment",

@@ -4,7 +4,7 @@ import { Card } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { RatingStars } from './RatingStars';
 import { Palette, Radius, Spacing, Typography } from '@/constants/theme';
-import { formatAmount } from '@/lib/stripe';
+import { formatAmount } from '@/lib/currency';
 import type { Service } from '@/types';
 
 export function ServiceCard({

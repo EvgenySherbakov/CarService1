@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FlowHeader } from '@/components/layout/FlowHeader';
@@ -9,8 +9,12 @@ import { Badge } from '@/components/ui/Badge';
 import { RatingStars } from '@/components/RatingStars';
 import { mockRentalCars } from '@/lib/mock-data';
 import { useBookingStore } from '@/store/booking';
-import { formatAmount } from '@/lib/stripe';
+import { useAuthStore } from '@/store/auth';
+import { formatAmount } from '@/lib/currency';
 import { Palette, Radius, Spacing, Typography } from '@/constants/theme';
+import type { Rental } from '@/types';
+
+type PaymentMode = 'now' | 'office';
 
 const dayChips = (offset: number) =>
   Array.from({ length: 14 }).map((_, i) => {
@@ -23,12 +27,14 @@ export default function RentalScreen() {
   const { carId } = useLocalSearchParams<{ carId: string }>();
   const { t } = useTranslation();
   const router = useRouter();
-  const { setRentalDraft } = useBookingStore();
+  const { setRentalDraft, addRental, clearRentalDraft } = useBookingStore();
+  const profile = useAuthStore((s) => s.profile);
 
   const car = useMemo(() => mockRentalCars.find((c) => c.id === carId), [carId]);
 
   const [start, setStart] = useState(dayChips(1)[0]);
   const [end, setEnd] = useState(dayChips(1)[2]);
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>('office');
 
   if (!car) {
     return (
@@ -46,14 +52,41 @@ export default function RentalScreen() {
 
   const handleContinue = () => {
     setRentalDraft({ car, startDate: start, endDate: end });
-    router.push({
-      pathname: '/checkout/[type]',
+
+    if (paymentMode === 'now') {
+      router.push({
+        pathname: '/checkout/[type]',
+        params: {
+          type: 'rental',
+          amount: rentalTotal.toString(),
+          deposit: car.depositAmount.toString(),
+          title: `${car.make} ${car.model}`,
+          days: days.toString(),
+        },
+      });
+      return;
+    }
+
+    const rental: Rental = {
+      id: `rent_${Date.now()}`,
+      clientId: profile?.id ?? 'demo',
+      carId: car.id,
+      car,
+      startDate: start,
+      endDate: end,
+      status: 'pending',
+      totalAmount: rentalTotal,
+      depositAmount: car.depositAmount,
+      createdAt: new Date().toISOString(),
+    };
+    addRental(rental);
+    clearRentalDraft();
+    router.replace({
+      pathname: '/booking-success',
       params: {
-        type: 'rental',
-        amount: rentalTotal.toString(),
-        deposit: car.depositAmount.toString(),
+        paid: '0',
         title: `${car.make} ${car.model}`,
-        days: days.toString(),
+        amount: rentalTotal.toString(),
       },
     });
   };
@@ -109,6 +142,24 @@ export default function RentalScreen() {
             tone="warning"
           />
         </Card>
+
+        <Text style={[Typography.h4, { marginTop: Spacing.xs }]}>
+          {t('booking.paymentMethod')}
+        </Text>
+        <PaymentChoice
+          icon="🏢"
+          title={t('booking.payAtOffice')}
+          description={t('booking.payAtOfficeDescription')}
+          active={paymentMode === 'office'}
+          onPress={() => setPaymentMode('office')}
+        />
+        <PaymentChoice
+          icon="💳"
+          title={t('booking.payNow')}
+          description={t('booking.payNowDescription')}
+          active={paymentMode === 'now'}
+          onPress={() => setPaymentMode('now')}
+        />
       </ScrollView>
 
       <View style={styles.footer}>
@@ -118,11 +169,97 @@ export default function RentalScreen() {
             {formatAmount(rentalTotal)}
           </Text>
         </View>
-        <Button title={t('rentals.rentNow')} variant="gradient" onPress={handleContinue} />
+        <Button
+          title={
+            paymentMode === 'now'
+              ? t('booking.continueToPayment')
+              : t('booking.confirmRental')
+          }
+          variant="gradient"
+          onPress={handleContinue}
+        />
       </View>
     </View>
   );
 }
+
+function PaymentChoice({
+  icon,
+  title,
+  description,
+  active,
+  onPress,
+}: {
+  icon: string;
+  title: string;
+  description: string;
+  active: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[
+        choiceStyles.row,
+        active && { borderColor: Palette.primary, backgroundColor: '#F0FDF4' },
+      ]}
+    >
+      <View style={choiceStyles.iconBubble}>
+        <Text style={{ fontSize: 22 }}>{icon}</Text>
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={[Typography.bodyBold]}>{title}</Text>
+        <Text
+          style={[Typography.small, { color: Palette.textSecondary, marginTop: 2 }]}
+          numberOfLines={3}
+        >
+          {description}
+        </Text>
+      </View>
+      <View style={[choiceStyles.radio, active && { borderColor: Palette.primary }]}>
+        {active && <View style={choiceStyles.radioDot} />}
+      </View>
+    </Pressable>
+  );
+}
+
+const choiceStyles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    padding: Spacing.sm,
+    borderWidth: 1.5,
+    borderColor: Palette.border,
+    borderRadius: Radius.md,
+    backgroundColor: Palette.surface,
+  },
+  iconBubble: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Palette.background,
+    borderWidth: 1,
+    borderColor: Palette.border,
+  },
+  radio: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: Palette.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: Palette.primary,
+  },
+});
 
 const Spec = ({ icon, label }: { icon: string; label: string }) => (
   <View style={styles.spec}>

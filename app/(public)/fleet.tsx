@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { RatingStars } from '@/components/RatingStars';
 import { useResponsive } from '@/hooks/useResponsive';
 import { mockRentalCars } from '@/lib/mock-data';
-import { formatAmount } from '@/lib/stripe';
+import { formatAmount } from '@/lib/currency';
 import { Palette, Radius, Spacing, Typography } from '@/constants/theme';
 import type { RentalCar } from '@/types';
 

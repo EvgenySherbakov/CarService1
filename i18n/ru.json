@@ -137,6 +137,23 @@
     "deposit": "Депозит (блокировка)",
     "rentalTotal": "Итого аренда"
   },
+  "booking": {
+    "paymentMethod": "Способ оплаты",
+    "payNow": "Оплатить сейчас",
+    "payNowDescription": "Оплата картой, Apple Pay или Google Pay — запись подтверждена полностью.",
+    "payAtOffice": "Оплата в офисе",
+    "payAtOfficeDescription": "Просто забронировать слот. Оплата при визите в AutoDuck — наличными или картой.",
+    "confirmBooking": "Подтвердить запись",
+    "confirmRental": "Подтвердить аренду",
+    "continueToPayment": "Перейти к оплате",
+    "submitting": "Отправляем…",
+    "successTitle": "Запись подтверждена",
+    "successSubtitleOffice": "Слот забронирован. Оплата производится в офисе при визите.",
+    "successSubtitlePaid": "Оплата получена. Запись подтверждена полностью.",
+    "successCallNote": "Возможно, мы перезвоним для подтверждения — ответьте, пожалуйста 🙂",
+    "viewBookings": "Мои записи",
+    "backToHome": "На главную"
+  },
   "checkout": {
     "title": "Оплата",
     "payment": "Способ оплаты",

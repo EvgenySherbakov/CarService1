@@ -44,7 +44,8 @@ From the welcome screen guests can open three public pages:
 - 🔧 **Book a repair** — service catalogue, vehicle/date/time, notes
 - 💧 **Book a wash** — wash packages and free time slots
 - 🚗 **Rent a car** — catalogue, rental period, per-day pricing, deposit
-- 💳 **Stripe payment** — card, **Apple Pay**, **Google Pay**, deposit hold
+- 🏢 **Pay at the office** — book without prepayment, settle the bill on arrival
+- 💳 **Pay online** — card, **Apple Pay**, **Google Pay** via Stripe (deposit hold)
 - 📅 **My bookings** — upcoming and past, statuses
 - 🚙 **My garage** — user vehicles
 - ⭐ **Reviews and ratings** of services and cars
@@ -74,6 +75,7 @@ From the welcome screen guests can open three public pages:
 | Flow | Service booking | `app/booking/[serviceId].tsx` |
 | Flow | Rental booking | `app/rental/[carId].tsx` |
 | Flow | Checkout (Stripe) | `app/checkout/[type].tsx` |
+| Flow | Booking success | `app/booking-success.tsx` |
 | Admin | Dashboard | `app/admin/index.tsx` |
 
 Detailed per-screen specs, states and acceptance criteria — in

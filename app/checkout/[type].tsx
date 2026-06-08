@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FlowHeader } from '@/components/layout/FlowHeader';
@@ -9,7 +7,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useBookingStore } from '@/store/booking';
 import { useAuthStore } from '@/store/auth';
-import { presentPaymentSheet, formatAmount } from '@/lib/stripe';
+import { presentPaymentSheet } from '@/lib/stripe';
+import { formatAmount } from '@/lib/currency';
 import { scheduleBookingReminder } from '@/lib/notifications';
 import { Palette, Radius, Spacing, Typography } from '@/constants/theme';
 import type { Booking, Rental } from '@/types';
@@ -40,7 +39,6 @@ export default function CheckoutScreen() {
 
   const [method, setMethod] = useState<Method>('card');
   const [paying, setPaying] = useState(false);
-  const [done, setDone] = useState(false);
 
   const amount = Number(params.amount ?? '0');
   const deposit = Number(params.deposit ?? '0');
@@ -98,39 +96,15 @@ export default function CheckoutScreen() {
       );
     }
 
-    setDone(true);
+    router.replace({
+      pathname: '/booking-success',
+      params: {
+        paid: '1',
+        title: params.title ?? '',
+        amount: amount.toString(),
+      },
+    });
   };
-
-  if (done) {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: Palette.background }}>
-        <LinearGradient
-          colors={[Palette.primary, Palette.secondary]}
-          style={styles.successHero}
-        >
-          <View style={styles.successCircle}>
-            <Text style={{ fontSize: 56 }}>✅</Text>
-          </View>
-          <Text style={[Typography.h1, { color: Palette.white }]}>{t('checkout.success')}</Text>
-          <Text style={[Typography.body, { color: 'rgba(255,255,255,0.9)', textAlign: 'center' }]}>
-            {t('checkout.successDescription')}
-          </Text>
-        </LinearGradient>
-        <View style={{ padding: Spacing.lg, gap: Spacing.sm }}>
-          <Button
-            title={t('checkout.viewBooking')}
-            variant="primary"
-            onPress={() => router.replace('/(tabs)/bookings')}
-          />
-          <Button
-            title={t('common.close')}
-            variant="ghost"
-            onPress={() => router.replace('/(tabs)')}
-          />
-        </View>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.background }}>
@@ -303,20 +277,5 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.background,
     borderTopWidth: 1,
     borderTopColor: Palette.border,
-  },
-  successHero: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.md,
-    padding: Spacing.lg,
-  },
-  successCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

@@ -14,7 +14,7 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { useAuthStore } from '@/store/auth';
 import { useBookingStore } from '@/store/booking';
 import { mockRentalCars, mockServices, mockVehicles } from '@/lib/mock-data';
-import { formatAmount } from '@/lib/stripe';
+import { formatAmount } from '@/lib/currency';
 import { Palette, Radius, Shadow, Spacing, Typography } from '@/constants/theme';
 
 const quickActions = [

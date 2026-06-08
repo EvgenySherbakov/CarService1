@@ -14,6 +14,11 @@ export type PaymentRequest = {
 
 const isStripeReady = !Config.useMock && !!Config.stripePublishableKey;
 
+/**
+ * Presents the Stripe Payment Sheet. In mock mode (no Stripe key)
+ * resolves with a fake `pi_mock_*` id after a short delay so the UI
+ * flow can be exercised end-to-end.
+ */
 export async function presentPaymentSheet(req: PaymentRequest): Promise<PaymentSheetResult> {
   if (!isStripeReady) {
     await new Promise((r) => setTimeout(r, 1200));
@@ -27,16 +32,4 @@ export async function presentPaymentSheet(req: PaymentRequest): Promise<PaymentS
   }
 
   return { status: 'failed', reason: 'Stripe backend not configured' };
-}
-
-export function formatAmount(amount: number, currency = Config.currency): string {
-  try {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  } catch {
-    return `${Config.currencyDisplay} ${amount.toFixed(0)}`;
-  }
 }

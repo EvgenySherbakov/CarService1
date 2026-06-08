@@ -137,6 +137,23 @@
     "deposit": "Caução (bloqueio)",
     "rentalTotal": "Total do aluguel"
   },
+  "booking": {
+    "paymentMethod": "Forma de pagamento",
+    "payNow": "Pagar agora",
+    "payNowDescription": "Pague com cartão, Apple Pay ou Google Pay — seu agendamento fica totalmente confirmado.",
+    "payAtOffice": "Pagar na oficina",
+    "payAtOfficeDescription": "Apenas reserve o horário. Pague na AutoDuck na hora do atendimento — dinheiro ou cartão.",
+    "confirmBooking": "Confirmar agendamento",
+    "confirmRental": "Confirmar aluguel",
+    "continueToPayment": "Ir para o pagamento",
+    "submitting": "Enviando…",
+    "successTitle": "Agendamento confirmado",
+    "successSubtitleOffice": "Horário reservado. O pagamento será feito na oficina.",
+    "successSubtitlePaid": "Pagamento recebido. Seu agendamento está totalmente confirmado.",
+    "successCallNote": "Podemos ligar para confirmar — atenda, por favor 🙂",
+    "viewBookings": "Meus agendamentos",
+    "backToHome": "Voltar ao início"
+  },
   "checkout": {
     "title": "Pagamento",
     "payment": "Forma de pagamento",

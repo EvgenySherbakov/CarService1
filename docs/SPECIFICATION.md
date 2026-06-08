@@ -196,7 +196,8 @@ Expo Router, file-based. Корневой layout — `Stack` без хедера
 | `/profile` | `app/(tabs)/profile.tsx` | профиль | client |
 | `/booking/[serviceId]` | `app/booking/[serviceId].tsx` | бронирование услуги | client |
 | `/rental/[carId]` | `app/rental/[carId].tsx` | бронирование аренды | client |
-| `/checkout/[type]` | `app/checkout/[type].tsx` | оплата (`booking`\|`rental`) | client |
+| `/checkout/[type]` | `app/checkout/[type].tsx` | оплата (`booking`\|`rental`) — открывается только при выборе «Оплатить сейчас» | client |
+| `/booking-success` | `app/booking-success.tsx` | универсальный экран успеха (для оплаченных и для бронирований с оплатой в офисе) | client |
 | `/admin` | `app/admin/index.tsx` | админ-дашборд | admin |
 
 **AuthGate** (`app/_layout.tsx`): следит за `profile` из `useAuthStore`.
@@ -428,12 +429,24 @@ rentals, payments, reviews, push_tokens`.
   6. поле комментария (`Input`, multiline);
   7. нижний бар: цена + кнопка `services.bookNow` (`variant="gradient"`).
 - **Состояния:** `vehicle, date, time, notes`.
-- **Взаимодействия:** кнопка → `setBookingDraft({...})` →
-  `push('/checkout/[type]', { type:'booking', amount, when, title })`.
+- **Выбор способа оплаты:** два варианта в виде радио-карточек —
+  **«Оплатить в офисе»** (`booking.payAtOffice`, по умолчанию) и
+  **«Оплатить сейчас»** (`booking.payNow`). Хранится в `paymentMode: 'office' | 'now'`.
+- **Взаимодействия:**
+  - `paymentMode === 'office'` → создать `Booking` со статусом `pending`
+    напрямую через `addBooking`, спланировать reminder, очистить черновик,
+    `replace('/booking-success?paid=0&title=…&amount=…')`.
+  - `paymentMode === 'now'` → `setBookingDraft({...})` →
+    `push('/checkout/[type]', { type:'booking', amount, when, title })`
+    (далее checkout → `/booking-success?paid=1`).
+- **Кнопка футера:** меняет лейбл — `booking.confirmBooking` или
+  `booking.continueToPayment`.
 - **Ошибки:** если услуга не найдена — `FlowHeader` с `common.error`.
-- **i18n:** `services.*`, `common.*`.
+- **i18n:** `services.*`, `booking.*`, `common.*`.
 - **Критерии приёмки:** нельзя продолжить без выбранных авто/даты/времени
-  (есть значения по умолчанию); черновик попадает в `bookingStore`.
+  (есть значения по умолчанию); при «Оплата в офисе» запись сразу попадает
+  в «Мои записи» со статусом `pending`; при «Оплатить сейчас» открывается
+  чек-аут со Stripe.
 
 ### 8.8 Бронирование аренды
 
@@ -448,10 +461,16 @@ rentals, payments, reviews, push_tokens`.
   4. сводка: число дней, цена/сутки, итого, badge с депозитом (`rentals.depositInfo`);
   5. нижний бар: итог + кнопка `rentals.rentNow` (`gradient`).
 - **Расчёт:** `days = max(1, round((end-start)/день))`, `total = days*pricePerDay`.
-- **Взаимодействия:** кнопка → `setRentalDraft({...})` →
-  `push('/checkout/[type]', { type:'rental', amount, deposit, title, days })`.
-- **i18n:** `rentals.*`, `common.*`.
-- **Критерии приёмки:** корректный расчёт дней и суммы; депозит показан явно.
+- **Выбор способа оплаты:** те же два варианта, что и в §8.7.
+- **Взаимодействия:**
+  - `paymentMode === 'office'` → создать `Rental` со статусом `pending`,
+    `replace('/booking-success?paid=0&title=…&amount=…')`.
+  - `paymentMode === 'now'` → `setRentalDraft({...})` →
+    `push('/checkout/[type]', { type:'rental', amount, deposit, title, days })`.
+- **Кнопка футера:** `booking.confirmRental` или `booking.continueToPayment`.
+- **i18n:** `rentals.*`, `booking.*`, `common.*`.
+- **Критерии приёмки:** корректный расчёт дней и суммы; депозит показан явно;
+  оба пути оплаты доступны.
 
 ### 8.9 Оплата (Checkout)
 
@@ -465,16 +484,37 @@ rentals, payments, reviews, push_tokens`.
   2. секция «Способ оплаты» — `card` (•••• 4242) / `applePay` (🍏) / `googlePay` (G),
      выбор радио-кнопкой;
   3. нижний бар: итог + кнопка `checkout.pay {amount}` (`gradient`, спиннер при оплате).
-- **Экран успеха (`done=true`):** полноэкранный градиент, ✅, `checkout.success`,
-  кнопки «Открыть запись» → `/bookings`, «Закрыть» → `/`.
 - **Логика:** `handlePay()` → `presentPaymentSheet({amount,currency,description})`.
   При `succeeded` создаёт `Booking`/`Rental` (статус `confirmed`,
   `paymentId`), кладёт в стор, очищает черновик; для услуги планирует
-  `scheduleBookingReminder()`. Затем `done=true`.
-- **Состояния:** `method`, `paying`, `done`.
+  `scheduleBookingReminder()`. Затем `replace('/booking-success?paid=1&…')`.
+- **Состояния:** `method`, `paying`.
 - **i18n:** `checkout.*`, `services.total`, `rentals.*`.
-- **Критерии приёмки:** успешная (mock) оплата создаёт запись, видимую в
-  «Мои записи»; экран успеха показывает корректные действия.
+- **Критерии приёмки:** успешная (mock) оплата создаёт запись со статусом
+  `confirmed`, видимую в «Мои записи»; после успеха пользователь
+  перенаправляется на `/booking-success` с флагом `paid=1`.
+
+### 8.9.1 Экран успеха (универсальный)
+
+- **Маршрут / файл:** `/booking-success` · `app/booking-success.tsx`
+- **Цель:** единый экран подтверждения для обоих сценариев — после оплаты в
+  чек-ауте (`paid=1`) и после прямого бронирования с «Оплата в офисе»
+  (`paid=0`).
+- **Параметры:** `paid: '0'|'1'`, `title?`, `amount?`.
+- **Раскладка:** градиентный hero сверху (зелёный → синий), круглый бейдж
+  с иконкой (✅ для оплаченных, 📅 для «в офисе»), заголовок
+  `booking.successTitle`. Подзаголовок переключается:
+  - `paid=1` → `booking.successSubtitlePaid`
+  - `paid=0` → `booking.successSubtitleOffice`
+- **Тело:** карточка сводки (название услуги/аренды и итоговая сумма с
+  пометкой «Оплата в офисе» при `paid=0`), для офисной оплаты —
+  предупреждение `booking.successCallNote`. Кнопки: «Мои записи» →
+  `/bookings`, «На главную» → `/`.
+- **i18n:** `booking.successTitle`, `successSubtitlePaid`,
+  `successSubtitleOffice`, `successCallNote`, `viewBookings`, `backToHome`,
+  `payAtOffice`.
+- **Критерии приёмки:** при разных значениях `paid` показывает разный
+  подзаголовок и иконку; кнопки навигируют корректно.
 
 ### 8.10 Админ-дашборд
 
@@ -545,7 +585,8 @@ rentals, payments, reviews, push_tokens`.
 |------|--------------|--------------------------|
 | `lib/supabase.ts` | `getSupabase()`, `isSupabaseEnabled()` | возвращает `null` (клиент не создаётся) |
 | `lib/auth.ts` | `signInWithProvider`, `signOut`, `fetchProfile` | возвращает `mockProfile`/`mockAdminProfile` с задержкой |
-| `lib/stripe.ts` | `presentPaymentSheet`, `formatAmount` | имитирует успешную оплату (`pi_mock_*`) |
+| `lib/stripe.ts` | `presentPaymentSheet`, `PaymentSheetResult`, `PaymentRequest` | имитирует успешную оплату (`pi_mock_*`) при отсутствии ключа Stripe |
+| `lib/currency.ts` | `formatAmount(amount, currency?)` | форматирует число как валюту через `Intl.NumberFormat('pt-BR')`; используется во всех ценниках |
 | `lib/notifications.ts` | `ensureNotificationPermissions`, `scheduleBookingReminder` | на web — no-op |
 | `lib/mock-data.ts` | демоданные | источник всех каталогов/записей |
 | `lib/company-data.ts` | `companyInfo: CompanyInfo` | контент публичных страниц (контакты, команда, галерея, статистика). Редактируется вручную в коде — см. [`docs/CONTENT.md`](CONTENT.md). |
@@ -571,9 +612,14 @@ type PaymentSheetResult =
 
 ### 12.2 Сценарии
 
-- **Услуга (ремонт/мойка):** разовое списание `amount`, `capture: 'immediate'`.
-- **Аренда:** списание стоимости аренды + **предавторизация депозита**
-  (`capture: 'manual'`, освобождается при возврате авто).
+- **Оплата в офисе (по умолчанию):** Stripe не вызывается. Запись/аренда
+  сразу создаётся со статусом `pending` (ожидает офисного подтверждения),
+  `paymentId` отсутствует. Сумма `totalAmount` сохраняется как ожидаемая
+  цена. Дальше клиент платит наличными или картой при визите.
+- **Оплата сейчас (услуга):** разовое списание `amount`, `capture: 'immediate'`.
+  Запись создаётся со статусом `confirmed` и `paymentId`.
+- **Оплата сейчас (аренда):** списание стоимости аренды + **предавторизация
+  депозита** (`capture: 'manual'`, освобождается при возврате авто).
 - **Кошельки:** Apple Pay / Google Pay как методы в Payment Sheet.
 
 ### 12.3 Реальная интеграция (вне MVP)
@@ -595,7 +641,10 @@ type PaymentSheetResult =
 - Инициализация — `i18n/index.ts`: язык из `expo-localization`, иначе fallback.
 - Доступ — `useTranslation()` → `t('namespace.key')`.
 - Неймспейсы ключей: `brand, common, auth, guestMenu, contact, fleet, about,
-  tabs, home, services, rentals, checkout, bookings, profile, review, admin`.
+  tabs, home, services, rentals, booking, checkout, bookings, profile,
+  review, admin`. Неймспейс `booking` (единственное число) — для нового
+  flow с выбором способа оплаты; `bookings` (множественное) — для вкладки
+  «Мои записи».
 - **Правило:** любой видимый текст — только через `t()`. Новые строки
   добавлять во все три файла одновременно (одинаковые ключи).
 
