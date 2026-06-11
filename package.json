@@ -9,7 +9,33 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "check:supabase": "node scripts/check-supabase.mjs"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "testMatch": [
+      "**/__tests__/**/*.test.ts",
+      "**/__tests__/**/*.test.tsx"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@supabase|i18next|react-i18next|zustand))"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    },
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "collectCoverageFrom": [
+      "lib/**/*.ts",
+      "store/**/*.ts",
+      "constants/**/*.ts",
+      "hooks/**/*.ts",
+      "!**/*.d.ts"
+    ]
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
@@ -45,9 +71,12 @@
     "@babel/plugin-transform-class-properties": "^7.29.7",
     "@babel/plugin-transform-private-methods": "^7.29.7",
     "@babel/plugin-transform-private-property-in-object": "^7.29.7",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "babel-plugin-transform-import-meta": "^2.3.3",
     "babel-preset-expo": "~54.0.0",
+    "jest": "^29.7.0",
+    "jest-expo": "~54.0.0",
     "typescript": "~5.9.0"
   },
   "private": true

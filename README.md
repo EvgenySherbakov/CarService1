@@ -254,6 +254,16 @@ CarService1/
 
 ## Architecture
 
+The system is documented in the **C4 model** — three nested diagrams:
+**System Context** (who uses the app, what it talks to), **Container** (the
+web/mobile apps + Supabase + Stripe) and **Component** (the frontend
+modules and their dependencies). Diagrams use Mermaid and render natively
+on GitHub.
+
+➡ Full description, diagrams and module reference: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+
+Short version below:
+
 - **Routing.** The root `app/_layout.tsx` is a `Stack` with an `AuthGate`:
   with a profile it redirects to `(tabs)`, otherwise to `welcome`. The
   `(public)` group (contacts, fleet, about) is open to both guests and
@@ -331,6 +341,35 @@ Profile).
 
 ---
 
+## Testing
+
+Unit tests run on **Jest 29 + jest-expo (SDK 54)**. They cover the
+business logic — stores, currency formatting, the Stripe mock, auth
+flow, Supabase mode detection, navigation manifest and i18n bundle
+parity.
+
+```bash
+npm test              # run all tests
+npm run test:watch    # watch mode while iterating
+npm run test:coverage # full coverage report
+```
+
+**Current coverage (`lib/*`, `store/*`, `constants/*`):**
+
+| Module | Statements | Branches |
+|--------|-----------|----------|
+| `store/auth.ts` | 100% | 100% |
+| `store/booking.ts` | 100% | 100% |
+| `lib/currency.ts` | 100% | 100% |
+| `lib/stripe.ts` | 87.5% | 66% |
+| `constants/nav.ts` | 100% | 100% |
+| i18n bundles | parity-checked across en/ru/pt-BR |
+
+Tests live in `__tests__/` folders next to the code they cover.
+Native-only modules (`AsyncStorage`, `expo-notifications`) are mocked
+in `jest.setup.js`. Test ENV forces `EXPO_PUBLIC_USE_MOCK=true` so the
+service layer stays deterministic and offline.
+
 ## Commands
 
 ```bash
@@ -340,6 +379,7 @@ npm run android      # Android
 npm run ios          # iOS
 npm run typecheck    # tsc --noEmit (strict)
 npm run lint         # expo lint
+npm test             # run unit tests
 ```
 
 ---
@@ -358,6 +398,9 @@ npm run lint         # expo lint
 
 ## Documentation
 
+- 📄 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — **C4 architecture**:
+  System Context, Container and Component diagrams in Mermaid, plus the
+  mock-vs-live data flow.
 - 📄 [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) — **full spec**: every
   screen, component, data model, scenario, acceptance criterion. Written so
   that both a developer and an AI agent can rebuild the app from it.

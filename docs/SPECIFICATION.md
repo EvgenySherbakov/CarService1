@@ -704,6 +704,14 @@ prebuild; нет ссылок на отсутствующие asset-файлы �
 ## 15. Нефункциональные требования
 
 - **Типобезопасность:** `npm run typecheck` (tsc strict) — без ошибок.
+- **Unit-тесты:** `npm test` — все suites зелёные. Запуск через Jest 29 +
+  jest-expo (под SDK 54). Покрытие бизнес-логики (`lib/*`, `store/*`,
+  `constants/*`): сторы и `lib/currency.ts` — 100%, `lib/stripe.ts` — 87%.
+  Тесты лежат в `__tests__/` рядом с тестируемым кодом. Конфигурация —
+  `jest` в `package.json`, ENV-фикстуры — `jest.setup.js` (включая
+  AsyncStorage-мок и `EXPO_PUBLIC_USE_MOCK=true`).
+- **Архитектурная документация:** см. [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
+  — C4-диаграммы (System Context, Container, Component) в Mermaid.
 - **Сборка web:** `npx expo start --web` собирается без ошибок резолвинга
   (см. `metro.config.js`).
 - **Производительность:** списки — через `Grid`/`FlatList`; изображения —

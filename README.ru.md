@@ -253,6 +253,15 @@ CarService1/
 
 ## Архитектура
 
+Система описана в **C4-модели** — три вложенных уровня диаграмм: **System
+Context** (кто пользуется, с чем общается), **Container** (Web/Mobile +
+Supabase + Stripe) и **Component** (модули фронтенда и их связи). Диаграммы
+на Mermaid, GitHub отрисовывает их прямо в README.
+
+➡ Полное описание со схемами и таблицей модулей: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+
+Кратко:
+
 - **Роутинг.** Корневой `app/_layout.tsx` — `Stack` с `AuthGate`: при наличии
   профиля редиректит в `(tabs)`, иначе — на `welcome`. Группа `(tabs)`
   рендерит `AppShell` + `Slot` (без отдельного навигатора, чтобы оболочка
@@ -323,6 +332,30 @@ const { t } = useTranslation();
 
 ---
 
+## Тестирование
+
+Unit-тесты на **Jest 29 + jest-expo (SDK 54)** — покрывают бизнес-логику:
+сторы, форматирование валюты, mock Stripe, auth-flow, режим Supabase,
+структуру навигации и паритет i18n.
+
+```bash
+npm test              # все тесты
+npm run test:watch    # watch-режим при разработке
+npm run test:coverage # покрытие
+```
+
+| Модуль | Statements | Branches |
+|--------|-----------|----------|
+| `store/auth.ts` | 100% | 100% |
+| `store/booking.ts` | 100% | 100% |
+| `lib/currency.ts` | 100% | 100% |
+| `lib/stripe.ts` | 87.5% | 66% |
+| `constants/nav.ts` | 100% | 100% |
+
+Тесты лежат в `__tests__/` рядом с тестируемым кодом. Нативные модули
+(`AsyncStorage`, `expo-notifications`) замоканы в `jest.setup.js`.
+ENV для тестов фиксирует `EXPO_PUBLIC_USE_MOCK=true`.
+
 ## Команды
 
 ```bash
@@ -332,6 +365,7 @@ npm run android      # Android
 npm run ios          # iOS
 npm run typecheck    # tsc --noEmit (strict)
 npm run lint         # expo lint
+npm test             # unit-тесты
 ```
 
 ---
@@ -350,6 +384,9 @@ npm run lint         # expo lint
 
 ## Документация
 
+- 📄 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — **C4-архитектура**:
+  диаграммы System Context, Container и Component на Mermaid, плюс схема
+  переключения mock/live.
 - 📄 [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) — **полное ТЗ**: каждый
   экран, компонент, модель данных, сценарии, критерии готовности. Написано
   так, чтобы по нему мог собрать приложение как человек, так и AI-агент.
