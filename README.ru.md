@@ -2,6 +2,8 @@
 
 **Языки:** [English](README.md) · **Русский**
 
+[![CI](https://github.com/EvgenySherbakov/CarService1/actions/workflows/ci.yml/badge.svg)](https://github.com/EvgenySherbakov/CarService1/actions/workflows/ci.yml)
+
 Кроссплатформенное приложение (**Web · iOS · Android** из единой кодовой базы)
 для автосервиса **AutoDuck**: запись на **ремонт** и **мойку**, **аренда
 автомобилей** с онлайн-оплатой. Дизайн в цветах флага Бразилии, интерфейс на
@@ -393,6 +395,8 @@ npm test             # unit-тесты
 - 📄 [`docs/CONTENT.md`](docs/CONTENT.md) — **гид по контенту**: как менять
   цены, фото, названия авто, добавлять услуги. Для mock-режима (правка
   кода) и для Supabase Dashboard.
+- 📄 [`docs/DEPLOY.md`](docs/DEPLOY.md) — **гид по деплою**: пошагово
+  Supabase + Vercel (web) + EAS Build (mobile) + CI/CD на GitHub Actions.
 - 📄 [`TZ.md`](TZ.md) — исходное краткое ТЗ.
 - 📄 [`supabase/README.md`](supabase/README.md) — настройка бэкенда.
 

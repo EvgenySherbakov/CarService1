@@ -2,6 +2,8 @@
 
 **Languages:** **English** · [Русский](README.ru.md)
 
+[![CI](https://github.com/EvgenySherbakov/CarService1/actions/workflows/ci.yml/badge.svg)](https://github.com/EvgenySherbakov/CarService1/actions/workflows/ci.yml)
+
 Cross-platform application (**Web · iOS · Android** from a single codebase)
 for the **AutoDuck** car service: book **repairs** and **car washes**, **rent
 cars** with online payment. Brazil-flag-inspired design, UI available in
@@ -407,6 +409,8 @@ npm test             # run unit tests
 - 📄 [`docs/CONTENT.md`](docs/CONTENT.md) — **content management guide**: how
   to change prices, photos, car names, add services and cars; both for the
   mock mode (edit code) and the Supabase Dashboard.
+- 📄 [`docs/DEPLOY.md`](docs/DEPLOY.md) — **deployment guide**: step-by-step
+  Supabase + Vercel (web) + EAS Build (mobile) + GitHub Actions CI/CD.
 - 📄 [`TZ.md`](TZ.md) — original short spec (RU).
 - 📄 [`supabase/README.md`](supabase/README.md) — backend setup.
 - 📄 [`README.ru.md`](README.ru.md) — Russian version of this README.

@@ -712,6 +712,11 @@ prebuild; нет ссылок на отсутствующие asset-файлы �
   AsyncStorage-мок и `EXPO_PUBLIC_USE_MOCK=true`).
 - **Архитектурная документация:** см. [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
   — C4-диаграммы (System Context, Container, Component) в Mermaid.
+- **CI:** GitHub Actions (`.github/workflows/ci.yml`) на каждый push/PR
+  выполняет `npm ci --legacy-peer-deps` → `npm run typecheck` → `npm test`.
+- **Деплой:** пошаговый план — [`docs/DEPLOY.md`](DEPLOY.md): Supabase
+  (схема + RLS + OAuth + Storage), Vercel (web-статика), EAS Build (iOS/
+  Android), GitHub Actions.
 - **Сборка web:** `npx expo start --web` собирается без ошибок резолвинга
   (см. `metro.config.js`).
 - **Производительность:** списки — через `Grid`/`FlatList`; изображения —
