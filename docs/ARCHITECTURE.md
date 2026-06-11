@@ -28,16 +28,16 @@ graph TB
     ExpoPush["🔔 Expo Push<br/>Notification Service"]
     Maps["🗺️ Google Maps<br/>(deep link)"]
 
-    Client -->|использует| System
-    Admin -->|администрирует| System
+    Client -->|"использует"| System
+    Admin -->|"администрирует"| System
 
-    System -->|данные, аутентификация| Supabase
-    System -->|онлайн-оплата| Stripe
-    System -->|локальные напоминания| ExpoPush
-    System -->|открывает адрес| Maps
+    System -->|"данные · аутентификация"| Supabase
+    System -->|"онлайн-оплата"| Stripe
+    System -->|"локальные напоминания"| ExpoPush
+    System -->|"открывает адрес"| Maps
 
-    Supabase -->|OAuth federation| Google
-    Supabase -->|OAuth federation| Apple
+    Supabase -->|"OAuth federation"| Google
+    Supabase -->|"OAuth federation"| Apple
 ```
 
 **Что видно на диаграмме:**
@@ -63,33 +63,33 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "Клиентские контейнеры"
-        Web["🌐 Web App<br/>React Native Web<br/>(браузер)"]
-        Mobile["📱 Mobile App<br/>iOS / Android<br/>(Expo Go или нативная сборка)"]
+    subgraph clients["Клиентские контейнеры"]
+        Web["🌐 Web App<br/>React Native Web<br/>браузер"]
+        Mobile["📱 Mobile App<br/>iOS / Android<br/>Expo Go или нативная сборка"]
     end
 
-    subgraph "Supabase (managed)"
+    subgraph supabase["Supabase managed"]
         Auth["🔐 Supabase Auth<br/>JWT + OAuth"]
         DB["🗄️ Postgres + RLS<br/>profiles, services,<br/>rental_cars, bookings,<br/>rentals, payments, reviews"]
-        Storage["📁 Storage<br/>public-images bucket<br/>(фото услуг и авто)"]
-        EdgeFn["⚙️ Edge Functions<br/>(roadmap: create-payment-intent)"]
+        Storage["📁 Storage<br/>public-images bucket<br/>фото услуг и авто"]
+        EdgeFn["⚙️ Edge Functions<br/>roadmap: create-payment-intent"]
     end
 
     StripeAPI["💳 Stripe API"]
 
-    Web -->|"@supabase/supabase-js<br/>HTTPS / JWT"| Auth
-    Web -->|REST / Realtime| DB
-    Web -->|публичные URL| Storage
-    Mobile -->|"@supabase/supabase-js"| Auth
-    Mobile -->|REST / Realtime| DB
-    Mobile -->|публичные URL| Storage
+    Web -->|"supabase-js · HTTPS · JWT"| Auth
+    Web -->|"REST · Realtime"| DB
+    Web -->|"публичные URL"| Storage
+    Mobile -->|"supabase-js"| Auth
+    Mobile -->|"REST · Realtime"| DB
+    Mobile -->|"публичные URL"| Storage
 
-    Web -.->|payment intent<br/>(roadmap)| EdgeFn
-    Mobile -.->|payment intent<br/>(roadmap)| EdgeFn
-    EdgeFn -.->|server-side| StripeAPI
+    Web -.->|"payment intent · roadmap"| EdgeFn
+    Mobile -.->|"payment intent · roadmap"| EdgeFn
+    EdgeFn -.->|"server-side"| StripeAPI
 
-    Web -->|"@stripe/stripe-react-native"<br/>(client SDK)| StripeAPI
-    Mobile -->|"@stripe/stripe-react-native"| StripeAPI
+    Web -->|"stripe-react-native · client SDK"| StripeAPI
+    Mobile -->|"stripe-react-native"| StripeAPI
 ```
 
 **Контейнеры и стек:**
@@ -122,29 +122,29 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "App / Expo Router"
+    subgraph router["App · Expo Router"]
         Root["app/_layout.tsx<br/>Root Stack + AuthGate"]
-        Public["(public)/<br/>Гостевые страницы:<br/>contact · fleet · about"]
-        Auth["(auth)/<br/>Welcome / OAuth"]
-        Tabs["(tabs)/<br/>Home · Services · Rentals<br/>Bookings · Profile"]
+        Public["public группа<br/>Гостевые страницы:<br/>contact · fleet · about"]
+        Auth["auth группа<br/>Welcome · OAuth"]
+        Tabs["tabs группа<br/>Home · Services · Rentals<br/>Bookings · Profile"]
         Flows["Flows<br/>booking · rental ·<br/>checkout · booking-success"]
-        Admin["admin/<br/>Dashboard"]
+        Admin["admin<br/>Dashboard"]
     end
 
-    subgraph "Layout & UI"
-        Shell["AppShell<br/>Sidebar / BottomTabs"]
+    subgraph ui_layer["Layout и UI"]
+        Shell["AppShell<br/>Sidebar · BottomTabs"]
         Layout["Page · PageHeader ·<br/>Grid · FlowHeader"]
-        UI["ui/<br/>Button · Card · Input · Badge"]
+        UI["ui<br/>Button · Card · Input · Badge"]
         Cards["ServiceCard · CarCard ·<br/>BookingCard · RatingStars"]
     end
 
-    subgraph "State (Zustand)"
+    subgraph state["State · Zustand"]
         AuthStore["store/auth.ts<br/>profile, hydrated"]
         BookingStore["store/booking.ts<br/>bookings, rentals,<br/>drafts"]
     end
 
-    subgraph "Service Layer"
-        SupaLib["lib/supabase.ts<br/>(client or null)"]
+    subgraph services["Service Layer"]
+        SupaLib["lib/supabase.ts<br/>client или null"]
         AuthLib["lib/auth.ts<br/>signInWithProvider"]
         StripeLib["lib/stripe.ts<br/>presentPaymentSheet"]
         Currency["lib/currency.ts<br/>formatAmount"]
@@ -152,12 +152,12 @@ graph TB
         Mock["lib/mock-data.ts<br/>lib/company-data.ts"]
     end
 
-    subgraph "Foundation"
+    subgraph foundation["Foundation"]
         Theme["constants/theme.ts<br/>Palette, Typography,<br/>Spacing, Shadow"]
         Config["constants/config.ts<br/>ENV, useMock flag"]
-        I18n["i18n/<br/>en · ru · pt-BR"]
+        I18n["i18n<br/>en · ru · pt-BR"]
         Hooks["hooks/useResponsive"]
-        Types["types/<br/>Profile, Service,<br/>RentalCar, Booking, ..."]
+        Types["types<br/>Profile, Service,<br/>RentalCar, Booking"]
     end
 
     Root --> Public
@@ -233,10 +233,10 @@ graph TB
 
 ```mermaid
 graph LR
-    Screen["Экран / Хук"] --> Lib["lib/auth · lib/stripe · ..."]
+    Screen["Экран · Хук"] --> Lib["lib/auth · lib/stripe"]
     Lib --> Config{"Config.useMock?"}
-    Config -->|"true (нет .env)"| MockData["lib/mock-data.ts<br/>lib/company-data.ts"]
-    Config -->|"false (есть .env)"| SupaClient["lib/supabase.ts<br/>→ HTTP/Realtime"]
+    Config -->|"true · нет .env"| MockData["lib/mock-data.ts<br/>lib/company-data.ts"]
+    Config -->|"false · есть .env"| SupaClient["lib/supabase.ts<br/>HTTP · Realtime"]
     SupaClient --> SB[("Supabase")]
 ```
 
