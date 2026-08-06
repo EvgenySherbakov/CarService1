@@ -3,7 +3,8 @@ import { Platform } from 'react-native';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: false,
     shouldSetBadge: false,
   }),
@@ -27,6 +28,9 @@ export async function scheduleBookingReminder(
   if (fireAt < Date.now()) return;
   await Notifications.scheduleNotificationAsync({
     content: { title, body },
-    trigger: { date: new Date(fireAt) },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: new Date(fireAt),
+    },
   });
 }

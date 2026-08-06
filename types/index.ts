@@ -59,6 +59,30 @@ export type RentalCar = {
   available: boolean;
   rating: number;
   reviewsCount: number;
+  description?: string;
+};
+
+export type TeamMember = {
+  id: string;
+  name: string;
+  roleKey: string;
+  photoUrl: string;
+};
+
+export type CompanyInfo = {
+  name: string;
+  legalName: string;
+  foundedYear: number;
+  phones: string[];
+  whatsapp: string;
+  email: string;
+  address: string;
+  mapQuery: string;
+  mapImageUrl: string;
+  heroImageUrl: string;
+  gallery: string[];
+  team: TeamMember[];
+  stats: { years: number; clients: number; cars: number; rating: number };
 };
 
 export type BookingStatus =

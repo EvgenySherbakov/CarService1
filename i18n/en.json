@@ -36,6 +36,48 @@
     "terms": "By continuing you accept our Terms and Privacy Policy",
     "signOut": "Sign out"
   },
+  "guestMenu": {
+    "explore": "Explore without signing in",
+    "contacts": "Contacts",
+    "fleet": "Our fleet",
+    "about": "About us"
+  },
+  "contact": {
+    "title": "Contacts",
+    "subtitle": "Get in touch with AutoDuck",
+    "call": "Call",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "address": "Address",
+    "hours": "Working hours",
+    "hoursValue": "Mon–Sat, 08:00–20:00",
+    "openMaps": "Open in Maps",
+    "howToFind": "How to find us"
+  },
+  "fleet": {
+    "title": "Rental fleet",
+    "subtitle": "Cars available for rent",
+    "unavailable": "Unavailable",
+    "loginToRent": "Sign in to rent",
+    "note": "Sign in to book any car in a few taps."
+  },
+  "about": {
+    "title": "About AutoDuck",
+    "subtitle": "Premium car care in Brazil",
+    "story": "Our story",
+    "team": "Our team",
+    "gallery": "Our workshop",
+    "description": "AutoDuck has been caring for cars in São Paulo since 2014. What started as a small family garage has grown into a full-service center for repair, washing and car rental. We combine Brazilian warmth with engineering precision — every car leaves our workshop as good as new.",
+    "mission": "Our mission is simple: honest service, fair prices and total care for your car.",
+    "roleFounder": "Founder & CEO",
+    "roleCoFounder": "Co-founder",
+    "roleDirector": "Service Director",
+    "roleLeadMechanic": "Lead Mechanic",
+    "statYears": "years on the market",
+    "statClients": "happy clients",
+    "statCars": "cars in fleet",
+    "statRating": "average rating"
+  },
   "tabs": {
     "home": "Home",
     "services": "Services",
@@ -50,11 +92,14 @@
     "bookRepair": "Book repair",
     "bookWash": "Book a wash",
     "rentCar": "Rent a car",
-    "featuredServices": "Featured services",
-    "featuredCars": "Available cars",
     "viewAll": "View all",
     "promoTitle": "Brazilian quality service",
-    "promoSubtitle": "Premium care for your car"
+    "promoSubtitle": "Premium care for your car",
+    "upcomingVisits": "Upcoming visits",
+    "visitHistory": "Visit history",
+    "rental": "Rental",
+    "noUpcoming": "No upcoming visits — book a slot from the actions above.",
+    "noHistory": "Your past visits will appear here."
   },
   "services": {
     "title": "Services",
@@ -94,6 +139,23 @@
     "rentalDays_plural": "{{count}} days",
     "deposit": "Deposit (hold)",
     "rentalTotal": "Rental total"
+  },
+  "booking": {
+    "paymentMethod": "Payment method",
+    "payNow": "Pay now",
+    "payNowDescription": "Pay with card, Apple Pay or Google Pay — your booking is fully confirmed.",
+    "payAtOffice": "Pay at the office",
+    "payAtOfficeDescription": "Just reserve the slot. Settle the bill at AutoDuck when you arrive — cash or card.",
+    "confirmBooking": "Confirm booking",
+    "confirmRental": "Confirm rental",
+    "continueToPayment": "Continue to payment",
+    "submitting": "Confirming…",
+    "successTitle": "Booking confirmed",
+    "successSubtitleOffice": "We saved your slot. Payment will be processed at the office.",
+    "successSubtitlePaid": "Payment received. Your booking is fully confirmed.",
+    "successCallNote": "We may call to confirm — please answer 🙂",
+    "viewBookings": "View my bookings",
+    "backToHome": "Back to home"
   },
   "checkout": {
     "title": "Checkout",

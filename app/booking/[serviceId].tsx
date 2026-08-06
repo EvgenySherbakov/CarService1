@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { FlowHeader } from '@/components/layout/FlowHeader';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -10,9 +10,13 @@ import { Badge } from '@/components/ui/Badge';
 import { RatingStars } from '@/components/RatingStars';
 import { mockServices, mockVehicles } from '@/lib/mock-data';
 import { useBookingStore } from '@/store/booking';
-import { formatAmount } from '@/lib/stripe';
+import { useAuthStore } from '@/store/auth';
+import { formatAmount } from '@/lib/currency';
+import { scheduleBookingReminder } from '@/lib/notifications';
 import { Palette, Radius, Spacing, Typography } from '@/constants/theme';
-import type { Vehicle } from '@/types';
+import type { Booking, Vehicle } from '@/types';
+
+type PaymentMode = 'now' | 'office';
 
 function getDateChips() {
   const out: { value: string; label: string; sub: string }[] = [];
@@ -34,7 +38,8 @@ export default function BookingScreen() {
   const { serviceId } = useLocalSearchParams<{ serviceId: string }>();
   const { t } = useTranslation();
   const router = useRouter();
-  const { setBookingDraft, bookingDraft } = useBookingStore();
+  const { setBookingDraft, addBooking, clearBookingDraft } = useBookingStore();
+  const profile = useAuthStore((s) => s.profile);
 
   const service = useMemo(() => mockServices.find((s) => s.id === serviceId), [serviceId]);
 
@@ -42,33 +47,71 @@ export default function BookingScreen() {
   const [date, setDate] = useState(getDateChips()[1].value);
   const [time, setTime] = useState('10:00');
   const [notes, setNotes] = useState('');
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>('office');
 
   if (!service) {
     return (
-      <SafeAreaView style={{ flex: 1, padding: Spacing.lg }}>
-        <Text>{t('common.error')}</Text>
-      </SafeAreaView>
+      <View style={{ flex: 1, backgroundColor: Palette.background }}>
+        <FlowHeader title={t('common.error')} />
+      </View>
     );
   }
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const scheduledAt = `${date}T${time}:00`;
     setBookingDraft({ service, vehicle, date, time, notes });
-    router.push({
-      pathname: '/checkout/[type]',
-      params: {
-        type: 'booking',
-        amount: service.priceFrom.toString(),
-        when: scheduledAt,
-        title: service.name,
-      },
+
+    if (paymentMode === 'now') {
+      router.push({
+        pathname: '/checkout/[type]',
+        params: {
+          type: 'booking',
+          amount: service.priceFrom.toString(),
+          when: scheduledAt,
+          title: service.name,
+        },
+      });
+      return;
+    }
+
+    const booking: Booking = {
+      id: `b_${Date.now()}`,
+      clientId: profile?.id ?? 'demo',
+      serviceId: service.id,
+      service,
+      vehicleId: vehicle?.id,
+      scheduledAt,
+      status: 'pending',
+      notes,
+      totalAmount: service.priceFrom,
+      createdAt: new Date().toISOString(),
+    };
+    addBooking(booking);
+    clearBookingDraft();
+    await scheduleBookingReminder(
+      t('brand.name'),
+      `${service.name} — ${date} ${time}`,
+      scheduledAt,
+    );
+    router.replace({
+      pathname: '/booking-success',
+      params: { paid: '0', title: service.name, amount: service.priceFrom.toString() },
     });
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Palette.background }} edges={['bottom']}>
-      <Stack.Screen options={{ title: service.name, headerTintColor: Palette.text }} />
-      <ScrollView contentContainerStyle={{ padding: Spacing.lg, gap: Spacing.md, paddingBottom: 120 }}>
+    <View style={{ flex: 1, backgroundColor: Palette.background }}>
+      <FlowHeader title={service.name} />
+      <ScrollView
+        contentContainerStyle={{
+          padding: Spacing.lg,
+          gap: Spacing.md,
+          paddingBottom: 120,
+          width: '100%',
+          maxWidth: 720,
+          alignSelf: 'center',
+        }}
+      >
         <Image source={{ uri: service.imageUrl }} style={styles.hero} />
 
         <View>
@@ -198,6 +241,22 @@ export default function BookingScreen() {
           onChangeText={setNotes}
           style={{ minHeight: 80, textAlignVertical: 'top' }}
         />
+
+        <Text style={[Typography.h4]}>{t('booking.paymentMethod')}</Text>
+        <PaymentChoice
+          icon="🏢"
+          title={t('booking.payAtOffice')}
+          description={t('booking.payAtOfficeDescription')}
+          active={paymentMode === 'office'}
+          onPress={() => setPaymentMode('office')}
+        />
+        <PaymentChoice
+          icon="💳"
+          title={t('booking.payNow')}
+          description={t('booking.payNowDescription')}
+          active={paymentMode === 'now'}
+          onPress={() => setPaymentMode('now')}
+        />
       </ScrollView>
 
       <View style={styles.footer}>
@@ -207,11 +266,97 @@ export default function BookingScreen() {
             {formatAmount(service.priceFrom)}
           </Text>
         </View>
-        <Button title={t('services.bookNow')} variant="gradient" onPress={handleContinue} />
+        <Button
+          title={
+            paymentMode === 'now'
+              ? t('booking.continueToPayment')
+              : t('booking.confirmBooking')
+          }
+          variant="gradient"
+          onPress={handleContinue}
+        />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
+
+function PaymentChoice({
+  icon,
+  title,
+  description,
+  active,
+  onPress,
+}: {
+  icon: string;
+  title: string;
+  description: string;
+  active: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[
+        choiceStyles.row,
+        active && { borderColor: Palette.primary, backgroundColor: '#F0FDF4' },
+      ]}
+    >
+      <View style={choiceStyles.iconBubble}>
+        <Text style={{ fontSize: 22 }}>{icon}</Text>
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={[Typography.bodyBold]}>{title}</Text>
+        <Text
+          style={[Typography.small, { color: Palette.textSecondary, marginTop: 2 }]}
+          numberOfLines={3}
+        >
+          {description}
+        </Text>
+      </View>
+      <View style={[choiceStyles.radio, active && { borderColor: Palette.primary }]}>
+        {active && <View style={choiceStyles.radioDot} />}
+      </View>
+    </Pressable>
+  );
+}
+
+const choiceStyles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    padding: Spacing.sm,
+    borderWidth: 1.5,
+    borderColor: Palette.border,
+    borderRadius: Radius.md,
+    backgroundColor: Palette.surface,
+  },
+  iconBubble: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Palette.background,
+    borderWidth: 1,
+    borderColor: Palette.border,
+  },
+  radio: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: Palette.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: Palette.primary,
+  },
+});
 
 const styles = StyleSheet.create({
   hero: { width: '100%', height: 180, borderRadius: Radius.lg, backgroundColor: Palette.surface },

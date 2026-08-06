@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { BookingCard } from '@/components/BookingCard';
 import { useBookingStore } from '@/store/booking';
 import { mockReviews, mockRentalCars } from '@/lib/mock-data';
-import { formatAmount } from '@/lib/stripe';
+import { formatAmount } from '@/lib/currency';
 import { Palette, Radius, Spacing, Typography } from '@/constants/theme';
 
 export default function AdminDashboard() {

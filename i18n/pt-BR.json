@@ -36,6 +36,48 @@
     "terms": "Ao continuar você aceita nossos Termos e Política de Privacidade",
     "signOut": "Sair"
   },
+  "guestMenu": {
+    "explore": "Explorar sem fazer login",
+    "contacts": "Contatos",
+    "fleet": "Nossa frota",
+    "about": "Sobre nós"
+  },
+  "contact": {
+    "title": "Contatos",
+    "subtitle": "Fale com a AutoDuck",
+    "call": "Ligar",
+    "whatsapp": "WhatsApp",
+    "email": "E-mail",
+    "address": "Endereço",
+    "hours": "Horário de funcionamento",
+    "hoursValue": "Seg–Sáb, 08:00–20:00",
+    "openMaps": "Abrir no mapa",
+    "howToFind": "Como nos encontrar"
+  },
+  "fleet": {
+    "title": "Frota para aluguel",
+    "subtitle": "Carros disponíveis para alugar",
+    "unavailable": "Indisponível",
+    "loginToRent": "Entrar para alugar",
+    "note": "Faça login para reservar qualquer carro em poucos toques."
+  },
+  "about": {
+    "title": "Sobre a AutoDuck",
+    "subtitle": "Cuidado premium para carros no Brasil",
+    "story": "Nossa história",
+    "team": "Nossa equipe",
+    "gallery": "Nossa oficina",
+    "description": "A AutoDuck cuida de carros em São Paulo desde 2014. O que começou como uma pequena oficina familiar cresceu para um centro completo de reparo, lavagem e aluguel de carros. Unimos o calor brasileiro com a precisão da engenharia — cada carro sai da nossa oficina como novo.",
+    "mission": "Nossa missão é simples: serviço honesto, preços justos e cuidado total com o seu carro.",
+    "roleFounder": "Fundador e CEO",
+    "roleCoFounder": "Cofundadora",
+    "roleDirector": "Diretor de Serviços",
+    "roleLeadMechanic": "Mecânico-chefe",
+    "statYears": "anos no mercado",
+    "statClients": "clientes satisfeitos",
+    "statCars": "carros na frota",
+    "statRating": "avaliação média"
+  },
   "tabs": {
     "home": "Início",
     "services": "Serviços",
@@ -50,11 +92,14 @@
     "bookRepair": "Agendar reparo",
     "bookWash": "Agendar lavagem",
     "rentCar": "Alugar carro",
-    "featuredServices": "Serviços em destaque",
-    "featuredCars": "Carros disponíveis",
     "viewAll": "Ver todos",
     "promoTitle": "Qualidade brasileira em serviços",
-    "promoSubtitle": "Cuidado premium para o seu carro"
+    "promoSubtitle": "Cuidado premium para o seu carro",
+    "upcomingVisits": "Próximas visitas",
+    "visitHistory": "Histórico de visitas",
+    "rental": "Aluguel",
+    "noUpcoming": "Sem visitas agendadas — reserve um horário pelas ações rápidas acima.",
+    "noHistory": "Suas visitas anteriores aparecerão aqui."
   },
   "services": {
     "title": "Serviços",
@@ -94,6 +139,23 @@
     "rentalDays_plural": "{{count}} dias",
     "deposit": "Caução (bloqueio)",
     "rentalTotal": "Total do aluguel"
+  },
+  "booking": {
+    "paymentMethod": "Forma de pagamento",
+    "payNow": "Pagar agora",
+    "payNowDescription": "Pague com cartão, Apple Pay ou Google Pay — seu agendamento fica totalmente confirmado.",
+    "payAtOffice": "Pagar na oficina",
+    "payAtOfficeDescription": "Apenas reserve o horário. Pague na AutoDuck na hora do atendimento — dinheiro ou cartão.",
+    "confirmBooking": "Confirmar agendamento",
+    "confirmRental": "Confirmar aluguel",
+    "continueToPayment": "Ir para o pagamento",
+    "submitting": "Enviando…",
+    "successTitle": "Agendamento confirmado",
+    "successSubtitleOffice": "Horário reservado. O pagamento será feito na oficina.",
+    "successSubtitlePaid": "Pagamento recebido. Seu agendamento está totalmente confirmado.",
+    "successCallNote": "Podemos ligar para confirmar — atenda, por favor 🙂",
+    "viewBookings": "Meus agendamentos",
+    "backToHome": "Voltar ao início"
   },
   "checkout": {
     "title": "Pagamento",
